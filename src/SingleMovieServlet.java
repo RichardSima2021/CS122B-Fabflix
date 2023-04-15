@@ -1,6 +1,7 @@
 import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
 
+
 import javax.naming.InitialContext;
 import javax.naming.NamingException;
 import jakarta.servlet.ServletConfig;
@@ -89,49 +90,61 @@ public class SingleMovieServlet extends HttpServlet {
             getRatingStatement.close();
             ratingResult.close();
 
+            String getGenresQuery = "SELECT * FROM genres_in_movies gim, genres g WHERE g.id = gim.genreId AND gim.movieId = \"" + id + "\"";
+            Statement getGenresStatement = conn.createStatement();
+            ResultSet genresResult = getGenresStatement.executeQuery(getGenresQuery);
+            String genres = "";
+
+            while(genresResult.next()){
+                genres += genresResult.getString("name");
+                genres += ", ";
+            }
+            genres = genres.substring(0,genres.length()-2);
+
+            jsonObject.addProperty("genres", genres);
+
 
             JsonArray jsonArray = new JsonArray();
             jsonArray.add(jsonObject);
             /*
             [
-                {"title": xxxx, "director": xxxx, "rating": xxxx},
-
+                {"title": xxxx, "director": xxxx, "rating": xxxx}, | resultData[0]
+                {"stars_names": [star1_name, star2_name...]},        | resultData[1]
+                {"star_IDs": [star1_id, star2_id ... ]},
             ]
              */
 
-//            String getStarsQuery = "SELECT * FROM stars_in_movies sim, stars s WHERE s.id = sim.starId AND sim.movieId = \"" + id + "\"";
-//            Statement getStarsStatement = conn.createStatement();
-//            ResultSet starsResult = getStarsStatement.executeQuery(getStarsQuery);
-//
-//            JsonArray starsJsonArr = new JsonArray();
-//
-//            /*
-//
-//            jsonArray:
-//
-//            [
-//                jsonObject: {"title": xxxx, "director": xxxx, "rating": xxxx}
-//
-//                starsJsonArray: [
-//                            { "star1_name": xxxx, "star1_id": xxx},
-//                            { "star2_name": xxxx, "star2_id": xxx}]
-//
-//                 genresJsonArray: [
-//
-//
-//             */
-//
-//            getStarsStatement.close();
-//            starsResult.close();
-//
-//            String getGenresQuery = "SELECT name FROM genres_in_movies gim, genres g WHERE g.id = gim.genreId AND gim.movieId = \"" + id + "\"";
-//            Statement getGenresStatement = conn.createStatement();
-//            ResultSet genresResult = getGenresStatement.executeQuery(getGenresQuery);
-//
-//            JsonObject genresJson = new JsonObject();
-//            while(genresResult.next()){
-//                //genresJson.addProperty;
-//            }
+            JsonObject starsNames = new JsonObject();
+            JsonObject starsIDs = new JsonObject();
+            JsonArray starNamesArray = new JsonArray();
+            JsonArray starIDsArray = new JsonArray();
+
+            String getStarsQuery = "SELECT * FROM stars s, stars_in_movies sim WHERE sim.starId = s.id AND sim.movieId = \"" + id + "\"";
+            Statement getStarsStatement = conn.createStatement();
+            ResultSet starsResult = getStarsStatement.executeQuery(getStarsQuery);
+            System.out.println("Stars query executed");
+            while(starsResult.next()){
+                String currentStarName = starsResult.getString("name");
+                String currentStarID = starsResult.getString("id");
+                starNamesArray.add(currentStarName);
+                starIDsArray.add(currentStarID);
+            }
+
+            getStarsStatement.close();
+            starsResult.close();
+
+            starsNames.add("stars_names", starNamesArray);
+            jsonArray.add(starsNames);
+
+            starsIDs.add("stars_ids", starIDsArray);
+            jsonArray.add(starsIDs);
+
+
+
+
+            getGenresStatement.close();
+            genresResult.close();
+
 
             // Write JSON string to output
             out.write(jsonArray.toString());

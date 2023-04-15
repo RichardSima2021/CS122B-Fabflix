@@ -41,18 +41,26 @@ function handleResult(resultData) {
     let movieTableBodyElement = jQuery("#movie_table_body");
 
     // Concatenate the html tags with resultData jsonObject to create table rows
-    for (let i = 0; i < resultData.length; i++) {
-        let rowHTML = "";
-        rowHTML += "<tr>";
-        rowHTML += "<th>" + resultData[i]["director"] + "</th>";
-        rowHTML += "<th>" + resultData[i]["rating"] + "</th>";
-        // rowHTML += "<th>" + resultData[i]["genres"] + "</th>";
-        // rowHTML += "<th>" + resultData[i]["stars"] + "</th>";
-        rowHTML += "</tr>";
+    let rowHTML = "";
+    rowHTML += "<tr>";
+    rowHTML += "<th>" + resultData[0]["director"] + "</th>";
+    rowHTML += "<th>" + resultData[0]["rating"] + "</th>";
+    rowHTML += "<th>" + resultData[0]["genres"] + "</th>";
+    rowHTML += "<th>";
+
+    for(var i = 0; i < resultData[1]["stars_names"].length; i++){
+        rowHTML +=  "<a href =" +
+            "single-star.html?id=" + resultData[2]['stars_ids'][i] + ">" + resultData[1]['stars_names'][i] + "</a>" + ", ";
+    }
+
+    rowHTML += "</th>";
+
+    // rowHTML += "<th>" + resultData[i]["genres"] + "</th>";
+    // rowHTML += "<th>" + resultData[i]["stars"] + "</th>";
+    rowHTML += "</tr>";
 
         // Append the row created to the table body, which will refresh the page
         movieTableBodyElement.append(rowHTML);
-    }
 }
 
 /**

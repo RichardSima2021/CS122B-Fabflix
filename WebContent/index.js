@@ -48,47 +48,6 @@ function handleMovieResult(resultData) {
             "single-star.html?id=" + resultData[i]['star3_id'] + ">" + resultData[i]['star3_name'] + "</a>" + " "
         +"</th>";
 
-
-
-        // rowHTML +=
-        //     "<th>" +
-        //     // Add a link to single-star.html with id passed with GET url parameter
-        //     '<a href="single-star.html?id=' + resultData[i]['star1_id'] + '">'
-        //     + resultData[i]["star1_name"] +     // display star_name for the link text
-        //     '</a>' +
-        //     "</th>";
-        // try{
-        //     rowHTML+=
-        //         "<th>" +
-        //         // Add a link to single-star.html with id passed with GET url parameter
-        //         '<a href="single-star.html?id=' + resultData[i]['star2_id'] + '">'
-        //         + resultData[i]["star2_name"] +     // display star_name for the link text
-        //         '</a>' +
-        //         "</th>";
-        // }
-        // catch(err){
-        //
-        // }
-        // try{
-        //     rowHTML+=
-        //         "<th>" +
-        //         // Add a link to single-star.html with id passed with GET url parameter
-        //         '<a href="single-star.html?id=' + resultData[i]['star3_id'] + '">'
-        //         + resultData[i]["star3_name"] +     // display star_name for the link text
-        //         '</a>' +
-        //         "</th>";
-        // }
-        // catch(err){
-        //
-        // }
-        // rowHTML +=
-        //     "<th>" +
-        //     // Add a link to single-star.html with id passed with GET url parameter
-        //     '<a href="single-star.html?id=' + resultData[i]['star_id'] + '">'
-        //     + resultData[i]["star_name"] +     // display star_name for the link text
-        //     '</a>' +
-        //     "</th>";
-        // rowHTML += "<th>" + resultData[i]["year"] + "</th>";
         rowHTML += "</tr>";
 
         // Append the row created to the table body, which will refresh the page
