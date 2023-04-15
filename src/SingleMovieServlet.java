@@ -59,7 +59,6 @@ public class SingleMovieServlet extends HttpServlet {
 //            String query = "SELECT * from stars s, stars_in_movies sim, movies m " +
 //                    "WHERE m.id = sim.movieId and sim.starId = s.id and s.id = ?";
             String getMovieQuery = "SELECT * FROM movies WHERE id = ?";
-//            System.out.println(id);
 
 
             // Declare our statement
@@ -74,11 +73,8 @@ public class SingleMovieServlet extends HttpServlet {
             movieInfo.next();
             JsonObject jsonObject = new JsonObject();
             String title = movieInfo.getString("title");
-//            System.out.println(title);
             int year = movieInfo.getInt("year");
-//            System.out.println(year);
             String director = movieInfo.getString("director");
-//            System.out.println(director);
             jsonObject.addProperty("title",title);
             jsonObject.addProperty("year", year);
             jsonObject.addProperty("director",director);
@@ -90,12 +86,15 @@ public class SingleMovieServlet extends HttpServlet {
             Statement getRatingStatement = conn.createStatement();
             ResultSet ratingResult = getRatingStatement.executeQuery(getRatingQuery);
             ratingResult.next();
-            System.out.println("debug1");
+            Float rating = null;
+            try{
+                rating = ratingResult.getFloat("rating");
+            }
+            catch (Exception e)
+            {
+            }
 
-            Float rating = ratingResult.getFloat("rating");
-            System.out.println("debug2");
             jsonObject.addProperty("rating",rating);
-            System.out.println(rating); ///////////////////////////////////////////
 
 
             getRatingStatement.close();
@@ -111,7 +110,6 @@ public class SingleMovieServlet extends HttpServlet {
                 genres += ", ";
             }
             genres = genres.substring(0,genres.length()-2);
-            System.out.println(genres);
 
 
             jsonObject.addProperty("genres", genres);
