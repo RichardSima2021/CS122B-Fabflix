@@ -14,6 +14,7 @@
  * @param resultData jsonObject
  */
 function handleMovieResult(resultData) {
+
     console.log("handleStarResult: populating movie table from resultData");
 
     // Populate the movie table
@@ -26,14 +27,18 @@ function handleMovieResult(resultData) {
         // Concatenate the html tags with resultData jsonObject
         let rowHTML = "";
         rowHTML += "<tr>";
-        rowHTML +=
-            "<th>" +
-            // Add a link to single-star.html with id passed with GET url parameter
-            '<a href="single-star.html?id=' + resultData[i]['star_id'] + '">'
-            + resultData[i]["star_name"] +     // display star_name for the link text
-            '</a>' +
-            "</th>";
-        rowHTML += "<th>" + resultData[i]["star_dob"] + "</th>";
+        rowHTML += "<th>" + resultData[i]["title"] + "</th>";
+        rowHTML += "<th>" + resultData[i]["year"] + "</th>";
+        rowHTML += "<th>" + resultData[i]["director"] + "</th>";
+        rowHTML += "<th>" + resultData[i]["rating"] + "</th>";
+        // rowHTML +=
+        //     "<th>" +
+        //     // Add a link to single-star.html with id passed with GET url parameter
+        //     '<a href="single-star.html?id=' + resultData[i]['star_id'] + '">'
+        //     + resultData[i]["star_name"] +     // display star_name for the link text
+        //     '</a>' +
+        //     "</th>";
+        // rowHTML += "<th>" + resultData[i]["year"] + "</th>";
         rowHTML += "</tr>";
 
         // Append the row created to the table body, which will refresh the page
