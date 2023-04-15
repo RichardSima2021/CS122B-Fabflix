@@ -15,6 +15,7 @@ import java.sql.Connection;
 import java.sql.ResultSet;
 import java.sql.Statement;
 import java.util.ArrayList;
+import java.util.Arrays;
 
 
 // Declaring a WebServlet called StarsServlet, which maps to url "/api/movie-list"
@@ -55,9 +56,7 @@ public class MoviesServlet extends HttpServlet {
             // Iterate through each row of rs
             while (rs.next()) {
                 String movieID = rs.getString("movieId");
-                System.out.print(movieID + ": ");
                 float rating = rs.getFloat("rating");
-                System.out.println(rating);
                 // deal with genres and stars later
                 String getMovieQuery = "SELECT * FROM movies WHERE id = \"" + movieID + "\"";
                 Statement getMovieStatement = conn.createStatement();
@@ -68,17 +67,48 @@ public class MoviesServlet extends HttpServlet {
                 Integer year = movieData.getInt("year");
                 String director = movieData.getString("director");
 
-
+                String getGenresQuery = "SELECT g.name FROM genres_in_movies gim, genres g WHERE g.id = gim.genreId AND gim.movieId = \"" + movieID + "\" LIMIT 3";
+                Statement getGenresStatement = conn.createStatement();
+                ResultSet genresData = getGenresStatement.executeQuery(getGenresQuery);
+                String genres = "";
+                while(genresData.next()){
+                 genres += genresData.getString("name");
+                 genres += ", ";
+                }
+                genres = genres.substring(0,genres.length()-2);
                 // Create a JsonObject based on the data we retrieve from rs
                 JsonObject jsonObject = new JsonObject();
+                jsonObject.addProperty("movieID", movieID);
                 jsonObject.addProperty("title", title);
                 jsonObject.addProperty("year", year);
                 jsonObject.addProperty("director", director);
                 jsonObject.addProperty("rating", rating);
+                jsonObject.addProperty("genres", genres);
+
+                movieData.close();
+                getMovieStatement.close();
+
+                String getStarsQuery = "SELECT s.name, s.id FROM stars s, stars_in_movies sim WHERE s.id = sim.starId AND sim.movieId = \"" + movieID + "\" LIMIT 3";
+                Statement getStarsStatement = conn.createStatement();
+                ResultSet starsResult = getStarsStatement.executeQuery(getStarsQuery);
+                starsResult.next();
+                jsonObject.addProperty("star1_name", starsResult.getString("name"));
+                jsonObject.addProperty("star1_id", starsResult.getString("id"));
+                starsResult.next();
+                jsonObject.addProperty("star2_name", starsResult.getString("name"));
+                jsonObject.addProperty("star2_id", starsResult.getString("id"));
+                starsResult.next();
+                jsonObject.addProperty("star3_name", starsResult.getString("name"));
+                jsonObject.addProperty("star3_id", starsResult.getString("id"));
+
                 jsonArray.add(jsonObject);
+                getStarsStatement.close();
+                starsResult.close();
+
             }
             rs.close();
             statement.close();
+
 
             // Log to localhost log
             request.getServletContext().log("getting " + jsonArray.size() + " results");
@@ -93,7 +123,7 @@ public class MoviesServlet extends HttpServlet {
             // Write error message JSON object to output
             JsonObject jsonObject = new JsonObject();
             jsonObject.addProperty("errorMessage", e.getMessage());
-//            System.out.println(jsonObject);
+            System.out.println(jsonObject);
             out.write(jsonObject.toString());
 
             // Set response status to 500 (Internal Server Error)
