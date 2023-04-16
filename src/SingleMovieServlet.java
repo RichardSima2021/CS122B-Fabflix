@@ -89,12 +89,14 @@ public class SingleMovieServlet extends HttpServlet {
             Float rating = null;
             try{
                 rating = ratingResult.getFloat("rating");
+                jsonObject.addProperty("rating",rating);
             }
             catch (Exception e)
             {
+                jsonObject.addProperty("rating","N/A");
             }
 
-            jsonObject.addProperty("rating",rating);
+
 
 
             getRatingStatement.close();
