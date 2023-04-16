@@ -51,7 +51,14 @@ function handleResult(resultData) {
         starInfoElement.append("<p>Year Of Birth: N/A</p>")
     }
     else{
-        starInfoElement.append("<p>Year Of Birth: " + resultData[0]["star_dob"] + "</p>");
+        starInfoElement.append("<p style=\'font-size: 20px;color: #2C74B3\'>Year Of Birth: " + resultData[0]["star_dob"] + "</p>");
+
+        // <p id=\"losinfo\">" + resultData[0]["title"]
+        // + "<span style=\"font-size:20px;\">"+" (" + "</span>"
+        // + "<span style=\"font-size:20px;\">"+ resultData[0]["year"] + "</span>"
+        // + "<span style=\"font-size:20px;\">"+")" + "</span>"
+        // + "</p>"
+
     }
     console.log("handleResult: populating movie table from resultData");
 
@@ -63,14 +70,14 @@ function handleResult(resultData) {
     for (let i = 1; i < resultData.length; i++) {
         let rowHTML = "";
         rowHTML += "<tr>";
-        rowHTML += "<th>" +
+        rowHTML += "<td>" +
             // Add a link to single-movie.html with id passed with GET url parameter
             '<a href="single-movie.html?id=' + resultData[i]['movieId'] + '">'
             + resultData[i]["title"] +     // display title for the link text
             '</a>' +
-            "</th>";
-        rowHTML += "<th>" + resultData[i]["year"] + "</th>";
-        rowHTML += "<th>" + resultData[i]["director"] + "</th>";
+            "</td>";
+        rowHTML += "<td>" + resultData[i]["year"] + "</td>";
+        rowHTML += "<td>" + resultData[i]["director"] + "</td>";
         rowHTML += "</tr>";
 
         // Append the row created to the table body, which will refresh the page

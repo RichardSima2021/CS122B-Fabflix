@@ -1,0 +1,25 @@
+
+body {
+    background-color: #EEE9DA;
+}
+h1{
+    width: 100%;
+    color: #205295;
+    font-weight: bold;
+    margin-left: 20px;
+}
+h3 {
+    width: 100%;
+    color: #205295;
+    margin-left: 20px;
+}
+
+table {
+    border: solid 5px #93BFCF;
+    color: #6096B4;
+    margin-left: auto;
+    margin-right: auto;
+}
+th {
+    background-color: #93BFCF;
+}

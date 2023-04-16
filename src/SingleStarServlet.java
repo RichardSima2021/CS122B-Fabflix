@@ -101,7 +101,6 @@ public class SingleStarServlet extends HttpServlet {
             }
 
             String getMoviesQuery = "SELECT * FROM movies m, stars_in_movies sim WHERE sim.movieId = m.id AND sim.starId = \"" + id + "\"";
-//            System.out.println(id);
             Statement getMoviesStatement = conn.createStatement();
 
 

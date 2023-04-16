@@ -17,19 +17,30 @@
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css"
           integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous">
 
+    <!-- adding CSS -->
+    <link rel="stylesheet" href ="./style.css" >
+
     <title>Single Star</title>
 </head>
 <body>
-<a href = /cs122b_project1_war>
-    <h3>Home</h3>
-</a>
+<!--<nav class = "navbar navbar-light" style="background-color: #F3DEBA">-->
+<!--    <form class="container-fluid justify-content-start">-->
+<!--        <a href = /cs122b_project1_war><button type="button" class="btn btn-outline-secondary btn-sm" style="background-color: #ABC4AA"> Top Movie List </button></a>-->
+<!--    </form>-->
+<!--</nav>-->
+
+<ul class = "nav nav-pills">
+    <li>
+        <a href = /cs122b_project1_war><button type="button" class="btn btn-outline-secondary btn-sm" style="background-color: #BDCDD6"> Top Movie List </button></a>
+    </li>
+</ul>
 
 
 <!-- H3 body is left empty here, will be populated with the data retrieved with single-star.js -->
 <!-- single-star.js will find this html element by it's id "star_info" -->
 <h3 id="star_info"></h3>
 <table id=movie_table class="table table-striped">
-    <thead>
+    <thead class="table-dark">
     <tr>
         <th>Movie Title</th>
         <th>Release Year</th>
