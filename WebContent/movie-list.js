@@ -19,7 +19,7 @@ function getParameterByName(target) {
     let url = window.location.href;
     // Encode target parameter name to url encoding
     target = target.replace(/[\[\]]/g, "\\$&");
-
+    console.log("Looking for " + target + " in " + url);
     // Ues regular expression to find matched parameter value
     let regex = new RegExp("[?&]" + target + "(=([^&#]*)|&|#|$)"),
         results = regex.exec(url);
@@ -80,6 +80,8 @@ function handleMovieResult(resultData) {
 
 let movieGenre = getParameterByName('genre');
 let movieTitle = getParameterByName('title');
+// console.log("movie genre: " + movieGenre);
+// console.log("movie title: " + movieTitle);
 //continue here
 
 /**
