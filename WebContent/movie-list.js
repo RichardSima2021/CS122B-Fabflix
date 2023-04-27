@@ -59,6 +59,8 @@ function handleMovieResult(resultData) {
     }
 }
 
+let movieGenre = getParameterByName('genre');
+//continue here
 
 /**
  * Once this .js is loaded, following scripts will be executed by the browser
