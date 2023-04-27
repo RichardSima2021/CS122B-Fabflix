@@ -40,6 +40,7 @@ public class MovieListServlet extends HttpServlet {
 //        System.out.println("debug");
 //        System.out.println(request.getRequestURI());
         String searchByGenre = request.getParameter("searchByGenre");
+        String searchByTitle = request.getParameter("searchByTitle");
 //        System.out.println("Searching by genre: " + searchByGenre);
         // Output stream to STDOUT
         PrintWriter out = response.getWriter();
@@ -47,11 +48,23 @@ public class MovieListServlet extends HttpServlet {
         try (Connection conn = dataSource.getConnection()) {
             // Declare our statement
             Statement statement = conn.createStatement();
+            String query;
+            if(searchByGenre != null){
+                System.out.println("searchbygenre");
+                query = "SELECT r.movieId, r.rating FROM ratings r, genres_in_movies gim, genres g " +
+                        "WHERE gim.genreId = g.id AND r.movieId = gim.movieId AND g.name = \""+searchByGenre+"\""
+                        +"ORDER BY r.rating DESC LIMIT 20";
+            }
+            else if(searchByTitle != null){
+                System.out.println("searchbytitle");
+                query = "SELECT r.movieId, r.rating FROM ratings r, movies m WHERE r.movieId = m.id AND m.title LIKE \"" +
+                        searchByTitle + "\"";
+            }
+            else{
+                query = "SELECT movieId, rating FROM ratings ORDER BY rating DESC LIMIT 20 ";
+            }
 
 //            String query = "SELECT movieId, rating FROM ratings ORDER BY rating DESC LIMIT 20 ";
-            String query = "SELECT r.movieId, r.rating FROM ratings r, genres_in_movies gim, genres g " +
-                    "WHERE gim.genreId = g.id AND r.movieId = gim.movieId AND g.name = \""+searchByGenre+"\""
-                    +"ORDER BY r.rating DESC LIMIT 20";
 
             // Perform the query
             ResultSet rs = statement.executeQuery(query);

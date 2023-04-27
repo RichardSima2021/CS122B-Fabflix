@@ -79,6 +79,7 @@ function handleMovieResult(resultData) {
 }
 
 let movieGenre = getParameterByName('genre');
+let movieTitle = getParameterByName('title');
 //continue here
 
 /**
@@ -90,7 +91,8 @@ jQuery.ajax({
     method: "GET", // Setting request method
     url: "api/movie-list", // Setting request url, which is mapped by MovieListServlet in MovieListServlet.java
     data:{
-        "searchByGenre": movieGenre
+        "searchByGenre": movieGenre,
+        "searchByTitle": movieTitle
     },
     error: handleError(),
     success: (resultData) => handleMovieResult(resultData) // Setting callback function to handle data returned successfully by the MovieListServlet
