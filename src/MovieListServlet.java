@@ -24,6 +24,7 @@ public class MovieListServlet extends HttpServlet {
     private DataSource dataSource;
 
     public void init(ServletConfig config) {
+//        System.out.println("debug");
         try {
             dataSource = (DataSource) new InitialContext().lookup("java:comp/env/jdbc/moviedb");
         } catch (NamingException e) {
@@ -36,7 +37,10 @@ public class MovieListServlet extends HttpServlet {
      */
     protected void doGet(HttpServletRequest request, HttpServletResponse response) throws IOException {
         response.setContentType("application/json"); // Response mime type
-
+//        System.out.println("debug");
+//        System.out.println(request.getRequestURI());
+        String searchByGenre = request.getParameter("searchByGenre");
+//        System.out.println("Searching by genre: " + searchByGenre);
         // Output stream to STDOUT
         PrintWriter out = response.getWriter();
         // Get a connection from dataSource and let resource manager close the connection after usage.
@@ -44,7 +48,10 @@ public class MovieListServlet extends HttpServlet {
             // Declare our statement
             Statement statement = conn.createStatement();
 
-            String query = "SELECT movieId, rating FROM ratings ORDER BY rating DESC LIMIT 20 ";
+//            String query = "SELECT movieId, rating FROM ratings ORDER BY rating DESC LIMIT 20 ";
+            String query = "SELECT r.movieId, r.rating FROM ratings r, genres_in_movies gim, genres g " +
+                    "WHERE gim.genreId = g.id AND r.movieId = gim.movieId AND g.name = \""+searchByGenre+"\""
+                    +"ORDER BY r.rating DESC LIMIT 20";
 
             // Perform the query
             ResultSet rs = statement.executeQuery(query);

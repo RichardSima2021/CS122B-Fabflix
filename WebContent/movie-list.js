@@ -13,6 +13,25 @@
  * Handles the data returned by the API, read the jsonObject and populate data into html elements
  * @param resultData jsonObject
  */
+
+function getParameterByName(target) {
+    // Get request URL
+    let url = window.location.href;
+    // Encode target parameter name to url encoding
+    target = target.replace(/[\[\]]/g, "\\$&");
+
+    // Ues regular expression to find matched parameter value
+    let regex = new RegExp("[?&]" + target + "(=([^&#]*)|&|#|$)"),
+        results = regex.exec(url);
+    if (!results) return null;
+    if (!results[2]) return '';
+
+    // Return the decoded parameter value
+    return decodeURIComponent(results[2].replace(/\+/g, " "));
+}
+function handleError(){
+    console.log("Failed");
+}
 function handleMovieResult(resultData) {
 
     console.log("handleMovieListResult: populating movie table from resultData");
@@ -65,11 +84,15 @@ let movieGenre = getParameterByName('genre');
 /**
  * Once this .js is loaded, following scripts will be executed by the browser
  */
-
 // Makes the HTTP GET request and registers on success callback function handleStarResult
 jQuery.ajax({
     dataType: "json", // Setting return data type
     method: "GET", // Setting request method
-    url: "api/movie-list", // Setting request url, which is mapped by StarsServlet in Stars.java
-    success: (resultData) => handleMovieResult(resultData) // Setting callback function to handle data returned successfully by the StarsServlet
+    url: "api/movie-list", // Setting request url, which is mapped by MovieListServlet in MovieListServlet.java
+    data:{
+        "searchByGenre": movieGenre
+    },
+    error: handleError(),
+    success: (resultData) => handleMovieResult(resultData) // Setting callback function to handle data returned successfully by the MovieListServlet
+
 });
