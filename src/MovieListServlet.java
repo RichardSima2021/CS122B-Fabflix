@@ -44,6 +44,8 @@ public class MovieListServlet extends HttpServlet {
 
         String searchByGenre = request.getParameter("searchByGenre");
         String searchByTitle = request.getParameter("searchByTitle");
+        String sortOrder = request.getParameter("sortOrder");
+        String perPage = request.getParameter("perPage");
 
         HttpSession session = request.getSession();
 
@@ -53,31 +55,46 @@ public class MovieListServlet extends HttpServlet {
         try (Connection conn = dataSource.getConnection()) {
             // Declare our statement
             Statement statement = conn.createStatement();
-            String query_Select = "SELECT m.id, m.title, m.year, m.director ";
-            String query_From = "FROM movies m";
             String query;
             int page = 1;
-            int resultsPerPage = 25;
-            int offset = page * resultsPerPage;
+            int resultsPerPage;
+            String orderBy = " ORDER BY ";
+            if(sortOrder.equals("")){
+                orderBy += (String) session.getAttribute("sortOrder");
+            }
+            else{
+                orderBy += sortOrder;
+                session.setAttribute("sortOrder", orderBy);
+            }
+            if(perPage.equals("")){
+                resultsPerPage = (int) session.getAttribute("resultsPerPage");
+            }
+            else{
+                resultsPerPage = Integer.parseInt(perPage);
+                session.setAttribute("resultsPerPage", resultsPerPage);
+            }
+            int offset = (page-1) * resultsPerPage;
             String limitOffset = "LIMIT " + resultsPerPage + " OFFSET " + offset;
 //            String ratingQuery = " AND r.movieId = m.id";
             if(!searchByGenre.equals("")){
 
-                query = "SELECT m.id, m.title, m.year, m.director FROM movies m, genres_in_movies gim, genres g, ratings r "+
-                        "WHERE m.id = gim.movieId AND gim.genreId = g.id AND g.name = \"" + searchByGenre + "\"" +
+                query = "SELECT m.id, m.title, m.year, m.director, r.rating FROM movies m, genres_in_movies gim, genres g, ratings r "+
+                        "WHERE m.id = gim.movieId AND gim.genreId = g.id AND g.name = \"" + searchByGenre + "\"" + "AND r.movieId = m.id" +
+                        orderBy +
                         limitOffset;
                 session.setAttribute("query", query);
 
             }
             else if(!searchByTitle.equals("")){
                 searchByTitle += "%";
-                query = "SELECT m.id, m.title, m.year, m.director FROM movies m WHERE m.title LIKE \"" + searchByTitle + "\"" + limitOffset;
+                query = "SELECT m.id, m.title, m.year, m.director, r.rating FROM movies m, ratings r WHERE m.title LIKE \"" + searchByTitle + "\"" + "AND r.movieId = m.id" + orderBy + limitOffset;
                 session.setAttribute("query", query);
             }
             else{
                 query = (String) session.getAttribute("query");
             }
 
+            System.out.println(query);
 
             // Perform the query
             ResultSet movieIDSet = statement.executeQuery(query);

@@ -39,7 +39,7 @@ function handleMovieResult(resultData) {
     // Populate the movie table
     // Find the empty table body by id "star_table_body"
     let starTableBodyElement = jQuery("#movie_table_body");
-
+    starTableBodyElement.empty();
     // Iterate through resultData
     for (let i = 0; i < resultData.length; i++) {
 
@@ -84,11 +84,27 @@ function handleMovieResult(resultData) {
 
 let movieGenre = getParameterByName('genre');
 let movieTitle = getParameterByName('title');
-let sortOrder = "TARA";
+let sortOrder = "TITLE ASC, RATING ASC ";
 let perPage = 10;
 var updateButton = document.getElementById("updateButton");
 updateButton.addEventListener("click", function() {
+    sortOrder = document.getElementById("sort").value;
+    perPage = document.getElementById("perPage").value;
 
+    jQuery.ajax({
+        dataType: "json", // Setting return data type
+        method: "GET", // Setting request method
+        url: "api/movie-list", // Setting request url, which is mapped by MovieListServlet in MovieListServlet.java
+        data:{
+            "searchByGenre": movieGenre,
+            "searchByTitle": movieTitle,
+            "sortOrder": sortOrder,
+            "perPage": perPage
+        },
+        error: handleError(),
+        success: (resultData) => handleMovieResult(resultData) // Setting callback function to handle data returned successfully by the MovieListServlet
+
+    });
 });
 
 /**
