@@ -8,7 +8,7 @@
  *      2. Populate the data to correct html elements.
  */
 
-
+let search_form = $("#search_form");
 /**
  * Handles the data returned by the API, read the jsonObject and populate data into html elements
  * @param resultData jsonObject
@@ -84,8 +84,10 @@ function handleMovieResult(resultData) {
 
 let movieGenre = getParameterByName('genre');
 let movieTitle = getParameterByName('title');
-let sortOrder = "TITLE ASC, RATING ASC ";
-let perPage = 10;
+let sortOrder = "TITLE ASC, RATING ASC "; // This is a default value
+let perPage = 10; // This is a default value
+
+
 var updateButton = document.getElementById("updateButton");
 updateButton.addEventListener("click", function() {
     sortOrder = document.getElementById("sort").value;
@@ -107,6 +109,26 @@ updateButton.addEventListener("click", function() {
     });
 });
 
+function submitSearchForm(formSubmitEvent) {
+    console.log("submit search form");
+    /**
+     * When users click the submit button, the browser will not direct
+     * users to the url defined in HTML form. Instead, it will call this
+     * event handler when the event is triggered.
+     */
+    formSubmitEvent.preventDefault();
+
+    $.ajax({
+            url :"api/movie-list",
+            method: "GET",
+            // Serialize the login form to the data sent by get request
+            data: search_form.serialize(),
+        // NEED TO FIND SOME WAY TO SEND THIS DATA ACROSS
+            success: (resultData) => handleMovieResult(resultData)
+        }
+    );
+}
+
 /**
  * Once this .js is loaded, following scripts will be executed by the browser
  */
@@ -125,3 +147,5 @@ jQuery.ajax({
     success: (resultData) => handleMovieResult(resultData) // Setting callback function to handle data returned successfully by the MovieListServlet
 
 });
+
+search_form.submit(submitSearchForm);

@@ -42,6 +42,38 @@ public class MovieListServlet extends HttpServlet {
     protected void doGet(HttpServletRequest request, HttpServletResponse response) throws IOException {
         response.setContentType("application/json"); // Response mime type
 
+        // Don't use session to directly store query, use session to reconstruct query
+
+        /*
+            This servlet is called under four scenarios:
+            1. Browse
+            2. Search
+            3. Update
+            4. Return from single page
+
+            1.
+                Browse:
+                    - Either browse by genre or by title: generate two queries
+                    - Check request parameter for sort order and max per page
+
+            2.
+                Search:
+                    - Search has four possible conditions, build single query off that
+                    - check request parameter for sort order and max per page
+
+            3.
+                Update:
+                    - Update will keep last used query parameters except change the ORDER BY and LIMIT sections
+                    - Get those parameters from session..?
+
+            4.
+                Return from single page:
+                    - Was prior query a browse or search?
+
+
+
+         */
+
         String browseByGenre = request.getParameter("browseByGenre");
         String browseByTitle = request.getParameter("browseByTitle");
         String sortOrder = request.getParameter("sortOrder");
@@ -60,22 +92,30 @@ public class MovieListServlet extends HttpServlet {
             int resultsPerPage;
             String orderBy = " ORDER BY ";
             if(sortOrder.equals("")){
+                // if going back and thus URL wouldn't specify sortOrder
                 orderBy += (String) session.getAttribute("sortOrder");
             }
             else{
                 orderBy += sortOrder;
                 session.setAttribute("sortOrder", orderBy);
             }
+
+
             if(perPage.equals("")){
+                // if going back and thus URL wouldn't specify resultsPerPage
                 resultsPerPage = (int) session.getAttribute("resultsPerPage");
             }
             else{
                 resultsPerPage = Integer.parseInt(perPage);
                 session.setAttribute("resultsPerPage", resultsPerPage);
             }
+
+
             int offset = (page-1) * resultsPerPage;
             String limitOffset = "LIMIT " + resultsPerPage + " OFFSET " + offset;
-//            String ratingQuery = " AND r.movieId = m.id";
+
+
+
             if(!browseByGenre.equals("")){
 
                 query = "SELECT m.id, m.title, m.year, m.director, r.rating FROM movies m, genres_in_movies gim, genres g, ratings r "+
@@ -90,6 +130,7 @@ public class MovieListServlet extends HttpServlet {
                 query = "SELECT m.id, m.title, m.year, m.director, r.rating FROM movies m, ratings r WHERE m.title LIKE \"" + browseByTitle + "\"" + "AND r.movieId = m.id" + orderBy + limitOffset;
                 session.setAttribute("query", query);
             }
+
             else{
                 query = (String) session.getAttribute("query");
             }
