@@ -34,3 +34,19 @@ th {
 /*    grid-row-end: 3;*/
 /*    gap: 10px;*/
 /*}*/
+
+.container {
+    width: 600px;
+    display: grid;
+    text-align: center;
+    grid-template-columns: 1fr 1fr 1fr 1fr;
+    /*grid-template-rows: 1fr 1fr 1fr 1fr 1fr 1fr 1fr 1fr;*/
+    gap: 10px;
+}
+
+.genreGrid{
+    height: 50px;
+    width: 120px;
+    /*border: 3px solid #6096B4;*/
+    background-color: #BDCDD6;
+}

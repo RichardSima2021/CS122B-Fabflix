@@ -44,35 +44,36 @@ function handleResult(resultData) {
     let genreTableBodyElement = jQuery("#genre_table_body");
 
     // Concatenate the html tags with resultData jsonObject to create table rows
-    // for (let i = 1; i < resultData.length; i++) {
-    //     let rowHTML = "";
-    //     rowHTML += "<div class='g-col-6 g-col-md-4'>"
-    //         + '<a href="movie-list.html?genre=' + resultData[i]['genres'] + '">'
-    //         + resultData[i]["genres"]
-    //         + '</a>'
-    //         + "</div>";
-    //
-    //     // Append the row created to the table body, which will refresh the page
-    //     genreTableBodyElement.append(rowHTML);
-    // }
-    let g = 0;
-    for(let i = 0 ; i < Math.ceil(resultData['genres'].length/4); i++){
+    for (let i = 0; i < resultData['genres'].length; i++) {
+        let rowHTML = "";
+        rowHTML += "<div class='genreGrid'>"
+            + '<a href="movie-list.html?genre=' + resultData['genres'][i] + '">'
+            + resultData['genres'][i]
+            + ' </a>'
+            + "</div>";
 
-        let rowHTML = "<div class='g-col-6 g-col-lg-4'>";
-        for(let c = 0; c < 4; c++){
-            if(g >= resultData['genres'].length){
-                break;
-            }
-            else{
-                rowHTML += '<a href="movie-list.html?genre=' + resultData['genres'][g] + '">'
-                    + resultData['genres'][g]
-                    + ' </a>'
-                g += 1;
-            }
-        }
-        rowHTML += "</div>"
+        // Append the row created to the table body, which will refresh the page
         genreTableBodyElement.append(rowHTML);
     }
+
+    // let g = 0;
+    // for(let i = 0 ; i < Math.ceil(resultData['genres'].length/4); i++){
+    //
+    //     let rowHTML = "<div class='genreGrid'>";
+    //     for(let c = 0; c < 4; c++){
+    //         if(g >= resultData['genres'].length){
+    //             break;
+    //         }
+    //         else{
+    //             rowHTML += '<a href="movie-list.html?genre=' + resultData['genres'][g] + '">'
+    //                 + resultData['genres'][g]
+    //                 + ' </a>'
+    //             g += 1;
+    //         }
+    //     }
+    //     rowHTML += "</div>"
+    //     genreTableBodyElement.append(rowHTML);
+    // }
 
 }
 
