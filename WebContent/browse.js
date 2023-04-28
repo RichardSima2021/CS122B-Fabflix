@@ -3,21 +3,21 @@
  * @param target String
  * @returns {*}
  */
-function getParameterByName(target) {
-    // Get request URL
-    let url = window.location.href;
-    // Encode target parameter name to url encoding
-    target = target.replace(/[\[\]]/g, "\\$&");
-
-    // Ues regular expression to find matched parameter value
-    let regex = new RegExp("[?&]" + target + "(=([^&#]*)|&|#|$)"),
-        results = regex.exec(url);
-    if (!results) return null;
-    if (!results[2]) return '';
-
-    // Return the decoded parameter value
-    return decodeURIComponent(results[2].replace(/\+/g, " "));
-}
+// function getParameterByName(target) {
+//     // Get request URL
+//     let url = window.location.href;
+//     // Encode target parameter name to url encoding
+//     target = target.replace(/[\[\]]/g, "\\$&");
+//
+//     // Ues regular expression to find matched parameter value
+//     let regex = new RegExp("[?&]" + target + "(=([^&#]*)|&|#|$)"),
+//         results = regex.exec(url);
+//     if (!results) return null;
+//     if (!results[2]) return '';
+//
+//     // Return the decoded parameter value
+//     return decodeURIComponent(results[2].replace(/\+/g, " "));
+// }
 
 /**
  * Handles the data returned by the API, read the jsonObject and populate data into html elements
@@ -44,17 +44,36 @@ function handleResult(resultData) {
     let genreTableBodyElement = jQuery("#genre_table_body");
 
     // Concatenate the html tags with resultData jsonObject to create table rows
-    for (let i = 1; i < resultData.length; i++) {
-        let rowHTML = "";
-        rowHTML += "<div class='g-col-6 g-col-md-4'>"
-            + '<a href="movie-list.html?genre=' + resultData[i]['genres'] + '">'
-            + resultData[i]["genres"]
-            + '</a>'
-            + "</div>";
+    // for (let i = 1; i < resultData.length; i++) {
+    //     let rowHTML = "";
+    //     rowHTML += "<div class='g-col-6 g-col-md-4'>"
+    //         + '<a href="movie-list.html?genre=' + resultData[i]['genres'] + '">'
+    //         + resultData[i]["genres"]
+    //         + '</a>'
+    //         + "</div>";
+    //
+    //     // Append the row created to the table body, which will refresh the page
+    //     genreTableBodyElement.append(rowHTML);
+    // }
+    let g = 0;
+    for(let i = 0 ; i < Math.ceil(resultData['genres'].length/4); i++){
 
-        // Append the row created to the table body, which will refresh the page
+        let rowHTML = "<div class='g-col-6 g-col-md-4'>";
+        for(let c = 0; c < 4; c++){
+            if(g >= resultData['genres'].length){
+                break;
+            }
+            else{
+                rowHTML += '<a href="movie-list.html?genre=' + resultData['genres'][g] + '">'
+                    + resultData['genres'][g]
+                    + ' </a>'
+                g += 1;
+            }
+        }
+        rowHTML += "</div>"
         genreTableBodyElement.append(rowHTML);
     }
+
 }
 
 /**
