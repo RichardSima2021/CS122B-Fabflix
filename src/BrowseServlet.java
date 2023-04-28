@@ -55,29 +55,31 @@ public class BrowseServlet extends HttpServlet {
         try (Connection conn = dataSource.getConnection()) {
             // Get a connection from dataSource
 
-            JsonObject jsonObject = new JsonObject();
+            JsonObject genreJson = new JsonObject();
 
             String getGenresQuery = "SELECT * FROM genres";
             Statement getGenresStatement = conn.createStatement();
             ResultSet genresResult = getGenresStatement.executeQuery(getGenresQuery);
-            JsonArray jsonArray = new JsonArray();
+            JsonArray genresArray = new JsonArray();
 //            genresResult.next();
             while (genresResult.next())
             {
-                String genres = genresResult.getString("name");
-                jsonObject.addProperty("genres", genres);
+                String genre = genresResult.getString("name");
+                System.out.println(genre);
+                genresArray.add(genre);
             }
 
-            jsonArray.add(jsonObject);
+            genreJson.add("genres",genresArray);
 
             getGenresStatement.close();
             genresResult.close();
 
             // Log to localhost log
-            request.getServletContext().log("getting " + jsonArray.size() + " results");
+            request.getServletContext().log("getting " + genresArray.size() + " results");
+
 
             // Write JSON string to output
-            out.write(jsonArray.toString());
+            out.write(genreJson.toString());
             // Set response status to 200 (OK)
             response.setStatus(200);
 
