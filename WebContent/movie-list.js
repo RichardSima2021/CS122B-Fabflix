@@ -67,7 +67,7 @@ function handleMovieResult(resultData) {
         for(let c = 0; c < resultData[i]["stars_name"].length-1; c++){
             rowHTML += "<a href = single-star.html?id=" + resultData[i]["stars_id"][c] +">" + resultData[i]["stars_name"][c] + "</a>, ";
         }
-        rowHTML += "<a href = single-star.html?id=" + resultData[i]["stars_id"][resultData[i]["stars_name"].length-1] +">" + resultData[i]["stars_id"][resultData[i]["stars_name"].length-1] + "</a>";
+        rowHTML += "<a href = single-star.html?id=" + resultData[i]["stars_id"][resultData[i]["stars_name"].length-1] +">" + resultData[i]["stars_name"][resultData[i]["stars_name"].length-1] + "</a>";
         rowHTML += "</td>";
 
         // rowHTML +=
