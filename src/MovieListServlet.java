@@ -79,6 +79,8 @@ public class MovieListServlet extends HttpServlet {
         String sortOrder = request.getParameter("sortOrder");
         String perPage = request.getParameter("perPage");
 
+        String filter = request.getParameter("filter"); //This lets us know which of the four scenarios to deal with
+
         HttpSession session = request.getSession();
 
         // Output stream to STDOUT
