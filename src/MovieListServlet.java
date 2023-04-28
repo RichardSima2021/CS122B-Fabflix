@@ -8,6 +8,8 @@ import jakarta.servlet.annotation.WebServlet;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+import jakarta.servlet.http.HttpSession;
+
 import javax.sql.DataSource;
 import java.io.IOException;
 import java.io.PrintWriter;
@@ -39,8 +41,11 @@ public class MovieListServlet extends HttpServlet {
      */
     protected void doGet(HttpServletRequest request, HttpServletResponse response) throws IOException {
         response.setContentType("application/json"); // Response mime type
+
         String searchByGenre = request.getParameter("searchByGenre");
         String searchByTitle = request.getParameter("searchByTitle");
+
+        HttpSession session = request.getSession();
 
         // Output stream to STDOUT
         PrintWriter out = response.getWriter();
@@ -48,6 +53,8 @@ public class MovieListServlet extends HttpServlet {
         try (Connection conn = dataSource.getConnection()) {
             // Declare our statement
             Statement statement = conn.createStatement();
+            String query_Select = "SELECT m.id, m.title, m.year, m.director ";
+            String query_From = "FROM movies m";
             String query;
             int page = 1;
             int resultsPerPage = 25;
@@ -59,17 +66,16 @@ public class MovieListServlet extends HttpServlet {
                 query = "SELECT m.id, m.title, m.year, m.director FROM movies m, genres_in_movies gim, genres g, ratings r "+
                         "WHERE m.id = gim.movieId AND gim.genreId = g.id AND g.name = \"" + searchByGenre + "\"" +
                         limitOffset;
+                session.setAttribute("query", query);
 
             }
             else if(!searchByTitle.equals("")){
                 searchByTitle += "%";
-//                query = "SELECT r.movieId, r.rating FROM ratings r, movies m WHERE r.movieId = m.id AND m.title LIKE \"" +
-//                        searchByTitle + "\"";
                 query = "SELECT m.id, m.title, m.year, m.director FROM movies m WHERE m.title LIKE \"" + searchByTitle + "\"" + limitOffset;
-
+                session.setAttribute("query", query);
             }
             else{
-                query = "SELECT m.id, r.rating FROM ratings r, movies m WHERE r.movieId = m.id ORDER BY r.rating DESC LIMIT 20 ";
+                query = (String) session.getAttribute("query");
             }
 
 
