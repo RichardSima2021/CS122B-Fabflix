@@ -96,8 +96,8 @@ updateButton.addEventListener("click", function() {
         method: "GET", // Setting request method
         url: "api/movie-list", // Setting request url, which is mapped by MovieListServlet in MovieListServlet.java
         data:{
-            "searchByGenre": movieGenre,
-            "searchByTitle": movieTitle,
+            "browseByGenre": movieGenre,
+            "browseByTitle": movieTitle,
             "sortOrder": sortOrder,
             "perPage": perPage
         },
@@ -116,8 +116,8 @@ jQuery.ajax({
     method: "GET", // Setting request method
     url: "api/movie-list", // Setting request url, which is mapped by MovieListServlet in MovieListServlet.java
     data:{
-        "searchByGenre": movieGenre,
-        "searchByTitle": movieTitle,
+        "browseByGenre": movieGenre,
+        "browseByTitle": movieTitle,
         "sortOrder": sortOrder,
         "perPage": perPage
     },

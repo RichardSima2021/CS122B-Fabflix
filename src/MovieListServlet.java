@@ -42,8 +42,8 @@ public class MovieListServlet extends HttpServlet {
     protected void doGet(HttpServletRequest request, HttpServletResponse response) throws IOException {
         response.setContentType("application/json"); // Response mime type
 
-        String searchByGenre = request.getParameter("searchByGenre");
-        String searchByTitle = request.getParameter("searchByTitle");
+        String browseByGenre = request.getParameter("browseByGenre");
+        String browseByTitle = request.getParameter("browseByTitle");
         String sortOrder = request.getParameter("sortOrder");
         String perPage = request.getParameter("perPage");
 
@@ -76,18 +76,18 @@ public class MovieListServlet extends HttpServlet {
             int offset = (page-1) * resultsPerPage;
             String limitOffset = "LIMIT " + resultsPerPage + " OFFSET " + offset;
 //            String ratingQuery = " AND r.movieId = m.id";
-            if(!searchByGenre.equals("")){
+            if(!browseByGenre.equals("")){
 
                 query = "SELECT m.id, m.title, m.year, m.director, r.rating FROM movies m, genres_in_movies gim, genres g, ratings r "+
-                        "WHERE m.id = gim.movieId AND gim.genreId = g.id AND g.name = \"" + searchByGenre + "\"" + "AND r.movieId = m.id" +
+                        "WHERE m.id = gim.movieId AND gim.genreId = g.id AND g.name = \"" + browseByGenre + "\"" + "AND r.movieId = m.id" +
                         orderBy +
                         limitOffset;
                 session.setAttribute("query", query);
 
             }
-            else if(!searchByTitle.equals("")){
-                searchByTitle += "%";
-                query = "SELECT m.id, m.title, m.year, m.director, r.rating FROM movies m, ratings r WHERE m.title LIKE \"" + searchByTitle + "\"" + "AND r.movieId = m.id" + orderBy + limitOffset;
+            else if(!browseByTitle.equals("")){
+                browseByTitle += "%";
+                query = "SELECT m.id, m.title, m.year, m.director, r.rating FROM movies m, ratings r WHERE m.title LIKE \"" + browseByTitle + "\"" + "AND r.movieId = m.id" + orderBy + limitOffset;
                 session.setAttribute("query", query);
             }
             else{
