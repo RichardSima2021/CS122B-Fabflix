@@ -17,8 +17,10 @@ h3 {
 table {
     border: solid 5px #93BFCF;
     color: #6096B4;
-    margin-left: auto;
-    margin-right: auto;
+    /*margin-left: auto;*/
+    /*margin-right: auto;*/
+    width: 88%;
+    margin: 0 auto;
 }
 th {
     background-color: #93BFCF;

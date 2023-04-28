@@ -2,26 +2,49 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
+    <meta name="viewport"
+          content="width=device-width, initial-scale=1, shrink-to-fit=no">
+
+    <!-- Bootstrap CSS -->
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css"
+          integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous">
+
+    <!-- adding CSS -->
+    <link rel="stylesheet" href ="./style.css" >
+
     <title>Welcome to Fabflix!</title>
 </head>
 <body>
 
-<h1> Browse by Genre: </h1>
-<table>
-    <tbody id="browse_by_genre_body">
-    <tr>
-        <td><a href = "movie-list.html?genre=Action">  Action </a></td>
-        <td><a href = "movie-list.html?genre=Adult">  Adult</a></td>
-        <td><a href = "movie-list.html?genre=Adventure"> Adventure</a></td>
-        <td><a href = "movie-list.html?genre=Animation">Animation</a></td>
-    </tr>
-    <tr>
-        <td>Biography</td>
-        <td>Comedy</td>
-        <td>Crime</td>
-        <td>Documentary</td>
-    </tr>
-</table>
+<!--button return to movie list-->
+<ul class = "nav nav-pills">
+    <li>
+        <a href = /cs122b-project1><button type="button" class="btn btn-outline-secondary btn-sm" style="background-color: #BDCDD6"> Top 20 Movie List </button></a>
+    </li>
+</ul>
+
+<h1 id = "genre_info"> Browse by Genre: </h1>
+<div id = genre_table_body class = "grid text-center">
+
+    <!-- Table body is left empty here, will be populated with the data retrieved with browse.js -->
+    <!-- browse.js will find this html element by it's id "genre_table_body" -->
+<!--    <tbody id = genre_table_body></tbody>-->
+</div>
+<!--<table>-->
+<!--    <tbody id="browse_by_genre_body">-->
+<!--    <tr>-->
+<!--        <td><a href = "movie-list.html?genre=Action">  Action </a></td>-->
+<!--        <td><a href = "movie-list.html?genre=Adult">  Adult</a></td>-->
+<!--        <td><a href = "movie-list.html?genre=Adventure"> Adventure</a></td>-->
+<!--        <td><a href = "movie-list.html?genre=Animation">Animation</a></td>-->
+<!--    </tr>-->
+<!--    <tr>-->
+<!--        <td>Biography</td>-->
+<!--        <td>Comedy</td>-->
+<!--        <td>Crime</td>-->
+<!--        <td>Documentary</td>-->
+<!--    </tr>-->
+<!--</table>-->
 
 <h1> Browse by movie title:</h1>
 <table>
@@ -33,5 +56,18 @@
         <td><a href = "movie-list.html?title=D%">  D </a></td>
     </tr>
 </table>
+
+
+<!-- Load jQuery and Bootstrap JS -->
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.9/umd/popper.min.js"></script>
+<script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js"></script>
+
+<!-- Load our own JS file -->
+<!-- The path is relative to single-star.html, since these two files are in the same directory -->
+<!-- Note the url does not contain a "/" in the beginning, which means the url is relative to current path
+     otherwise the url is relative to the root path-->
+<script src="browse.js"></script>
+
 </body>
 </html>
