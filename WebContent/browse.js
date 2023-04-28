@@ -58,7 +58,7 @@ function handleResult(resultData) {
     let g = 0;
     for(let i = 0 ; i < Math.ceil(resultData['genres'].length/4); i++){
 
-        let rowHTML = "<div class='g-col-6 g-col-md-4'>";
+        let rowHTML = "<div class='g-col-6 g-col-lg-4'>";
         for(let c = 0; c < 4; c++){
             if(g >= resultData['genres'].length){
                 break;

@@ -13,6 +13,16 @@
     <link rel="stylesheet" href ="./style.css" >
 
     <title>Welcome to Fabflix!</title>
+    <style>
+        .grid text-center{
+            display: grid;
+            grid-column-start: 2;
+            grid-column-end: five;
+            grid-row-start: row1-start;
+            grid-row-end: 3;
+            gap: 10px;
+        }
+    </style>
 </head>
 <body>
 
@@ -24,27 +34,12 @@
 </ul>
 
 <h1 id = "genre_info"> Browse by Genre: </h1>
-<div id = genre_table_body class = "grid text-center">
+<div id = genre_table_body class = "grid text-center" >
 
     <!-- Table body is left empty here, will be populated with the data retrieved with browse.js -->
     <!-- browse.js will find this html element by it's id "genre_table_body" -->
 <!--    <tbody id = genre_table_body></tbody>-->
 </div>
-<!--<table>-->
-<!--    <tbody id="browse_by_genre_body">-->
-<!--    <tr>-->
-<!--        <td><a href = "movie-list.html?genre=Action">  Action </a></td>-->
-<!--        <td><a href = "movie-list.html?genre=Adult">  Adult</a></td>-->
-<!--        <td><a href = "movie-list.html?genre=Adventure"> Adventure</a></td>-->
-<!--        <td><a href = "movie-list.html?genre=Animation">Animation</a></td>-->
-<!--    </tr>-->
-<!--    <tr>-->
-<!--        <td>Biography</td>-->
-<!--        <td>Comedy</td>-->
-<!--        <td>Crime</td>-->
-<!--        <td>Documentary</td>-->
-<!--    </tr>-->
-<!--</table>-->
 
 <h1> Browse by movie title:</h1>
 <table>
