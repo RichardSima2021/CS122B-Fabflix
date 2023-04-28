@@ -40,8 +40,8 @@ function handleMovieResult(resultData) {
     // Find the empty table body by id "star_table_body"
     let starTableBodyElement = jQuery("#movie_table_body");
 
-    // Iterate through resultData, no more than 10 entries
-    for (let i = 0; i < Math.min(20, resultData.length); i++) {
+    // Iterate through resultData
+    for (let i = 0; i < resultData.length; i++) {
 
         // Concatenate the html tags with resultData jsonObject
         let rowHTML = "";
@@ -55,17 +55,30 @@ function handleMovieResult(resultData) {
             "</td>";
         rowHTML += "<td>" + resultData[i]["year"] + "</td>";
         rowHTML += "<td>" + resultData[i]["director"] + "</td>";
-        rowHTML += "<td>" + resultData[i]["genres"] + "</td>";
+        // rowHTML += "<td>" + resultData[i]["genres"] + "</td>";
+        rowHTML += "<td>";
+        for(let c = 0; c < resultData[i]["genres"].length-1; c++){
+            rowHTML += "<a href = movie-list.html?genre=" + resultData[i]["genres"][c] + ">" + resultData[i]["genres"][c] + "</a>, ";
+        }
+        rowHTML += "<a href = movie-list.html?genre=" + resultData[i]["genres"][resultData[i]["genres"].length-1] + ">" + resultData[i]["genres"][resultData[i]["genres"].length-1] + "</a>";
+        rowHTML += "</td>";
 
-        rowHTML +=
-            "<td>" +
-                "<a href =" +
-            "single-star.html?id=" + resultData[i]['star1_id'] + ">" + resultData[i]['star1_name'] + "</a>" + ", "
-        + "<a href =" +
-            "single-star.html?id=" + resultData[i]['star2_id'] + ">" + resultData[i]['star2_name'] + "</a>" + ", "
-        + "<a href =" +
-            "single-star.html?id=" + resultData[i]['star3_id'] + ">" + resultData[i]['star3_name'] + "</a>" + " "
-        +"</td>";
+        rowHTML += "<td>";
+        for(let c = 0; c < resultData[i]["stars_name"].length-1; c++){
+            rowHTML += "<a href = single-star.html?id=" + resultData[i]["stars_id"][c] +">" + resultData[i]["stars_name"][c] + "</a>, ";
+        }
+        rowHTML += "<a href = single-star.html?id=" + resultData[i]["stars_id"][resultData[i]["stars_name"].length-1] +">" + resultData[i]["stars_id"][resultData[i]["stars_name"].length-1] + "</a>";
+        rowHTML += "</td>";
+
+        // rowHTML +=
+        //     "<td>" +
+        //         "<a href =" +
+        //     "single-star.html?id=" + resultData[i]['star1_id'] + ">" + resultData[i]['star1_name'] + "</a>" + ", "
+        // + "<a href =" +
+        //     "single-star.html?id=" + resultData[i]['star2_id'] + ">" + resultData[i]['star2_name'] + "</a>" + ", "
+        // + "<a href =" +
+        //     "single-star.html?id=" + resultData[i]['star3_id'] + ">" + resultData[i]['star3_name'] + "</a>" + " "
+        // +"</td>";
 
         rowHTML += "<td>" + "<svg xmlns=\"http://www.w3.org/2000/svg\" width=\"16\" height=\"16\" fill=\"currentColor\" class=\"bi bi-star\" viewBox=\"0 0 16 16\">\n" +
             "  <path d=\"M2.866 14.85c-.078.444.36.791.746.593l4.39-2.256 4.389 2.256c.386.198.824-.149.746-.592l-.83-4.73 3.522-3.356c.33-.314.16-.888-.282-.95l-4.898-.696L8.465.792a.513.513 0 0 0-.927 0L5.354 5.12l-4.898.696c-.441.062-.612.636-.283.95l3.523 3.356-.83 4.73zm4.905-2.767-3.686 1.894.694-3.957a.565.565 0 0 0-.163-.505L1.71 6.745l4.052-.576a.525.525 0 0 0 .393-.288L8 2.223l1.847 3.658a.525.525 0 0 0 .393.288l4.052.575-2.906 2.77a.565.565 0 0 0-.163.506l.694 3.957-3.686-1.894a.503.503 0 0 0-.461 0z\"/>\n" +
