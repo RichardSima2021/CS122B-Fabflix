@@ -53,12 +53,6 @@ function handleResult(resultData) {
     else{
         starInfoElement.append("<p style=\'font-size: 20px;color: #2C74B3\'>Year Of Birth: " + resultData[0]["star_dob"] + "</p>");
 
-        // <p id=\"losinfo\">" + resultData[0]["title"]
-        // + "<span style=\"font-size:20px;\">"+" (" + "</span>"
-        // + "<span style=\"font-size:20px;\">"+ resultData[0]["year"] + "</span>"
-        // + "<span style=\"font-size:20px;\">"+")" + "</span>"
-        // + "</p>"
-
     }
     console.log("handleResult: populating movie table from resultData");
 

@@ -100,7 +100,7 @@ public class SingleStarServlet extends HttpServlet {
                 jsonArray.add(jsonObject);
             }
 
-            String getMoviesQuery = "SELECT * FROM movies m, stars_in_movies sim WHERE sim.movieId = m.id AND sim.starId = \"" + id + "\"";
+            String getMoviesQuery = "SELECT * FROM movies m, stars_in_movies sim WHERE sim.movieId = m.id AND sim.starId = \"" + id + "\" ORDER BY year DESC, title ASC";
             Statement getMoviesStatement = conn.createStatement();
 
 
