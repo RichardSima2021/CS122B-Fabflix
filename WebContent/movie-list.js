@@ -84,8 +84,9 @@ function handleMovieResult(resultData) {
 
 let movieGenre = getParameterByName('genre');
 let movieTitle = getParameterByName('title');
-let sortOrder = "TITLE ASC, RATING ASC "; // This is a default value
-let perPage = 10; // This is a default value
+let sortOrder = null //"TITLE ASC, RATING ASC "; // This is a default value
+let perPage = null //10; // This is a default value
+
 
 
 var updateButton = document.getElementById("updateButton");
@@ -99,8 +100,6 @@ updateButton.addEventListener("click", function() {
         url: "api/movie-list", // Setting request url, which is mapped by MovieListServlet in MovieListServlet.java
         data:{
             "filter" : "update",
-            "browseByGenre": movieGenre,
-            "browseByTitle": movieTitle,
             "sortOrder": sortOrder,
             "perPage": perPage
         },
@@ -112,6 +111,8 @@ updateButton.addEventListener("click", function() {
 
 function submitSearchForm(formSubmitEvent) {
     console.log("submit search form");
+    // console.log(document.getElementById("sort").value);
+    // console.log(document.querySelector("#searchTitle").value);
     /**
      * When users click the submit button, the browser will not direct
      * users to the url defined in HTML form. Instead, it will call this
@@ -119,11 +120,20 @@ function submitSearchForm(formSubmitEvent) {
      */
     formSubmitEvent.preventDefault();
 
-    $.ajax({
+    jQuery.ajax({
+            dataType: "json",
             url :"api/movie-list",
             method: "GET",
-            // Serialize the login form to the data sent by get request
-            data: search_form.serialize(),
+            data:
+                {
+                    "filter" : "search",
+                    "searchByTitle" : document.querySelector("#searchTitle").value,
+                    "searchByYear" : document.querySelector("#searchYear").value,
+                    "searchByDirector" : document.querySelector("#searchDirector").value,
+                    "searchByStar" : document.querySelector("#searchStar").value,
+                    "sortOrder" : document.getElementById("sort").value,
+                    "perPage" : document.getElementById("perPage").value
+                },
         // NEED TO FIND SOME WAY TO SEND THIS DATA ACROSS
             success: (resultData) => handleMovieResult(resultData)
         }
@@ -139,6 +149,7 @@ jQuery.ajax({
     method: "GET", // Setting request method
     url: "api/movie-list", // Setting request url, which is mapped by MovieListServlet in MovieListServlet.java
     data:{
+        "filter" : "browse",
         "browseByGenre": movieGenre,
         "browseByTitle": movieTitle,
         "sortOrder": sortOrder,

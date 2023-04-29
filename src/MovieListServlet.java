@@ -73,15 +73,48 @@ public class MovieListServlet extends HttpServlet {
 
 
          */
+        String filter = request.getParameter("filter"); // This lets us know which of the four scenarios to deal with
+
+        String sortOrder = request.getParameter("sortOrder"); // These will always be present
+        String perPage = request.getParameter("perPage");
+
 
         String browseByGenre = request.getParameter("browseByGenre");
         String browseByTitle = request.getParameter("browseByTitle");
-        String sortOrder = request.getParameter("sortOrder");
-        String perPage = request.getParameter("perPage");
 
-        String filter = request.getParameter("filter"); //This lets us know which of the four scenarios to deal with
+
+        String searchByTitle = request.getParameter("searchByTitle");
+        String searchByYear = request.getParameter("searchByYear");
+        String searchByDirector = request.getParameter("searchByDirector");
+        String searchByStar = request.getParameter("searchByStar");
 
         HttpSession session = request.getSession();
+
+        // If session does not currently store results per page - back from single page
+        // otherwise results per page are given by the other three scenarios
+        if(perPage.equals("")){
+            System.out.println("Grabbing perPage from session: ");
+            perPage = (String) session.getAttribute("resultsPerPage");
+            if(perPage == null){
+                perPage = "10";
+            }
+            System.out.println(perPage);
+        }
+        else{
+            session.setAttribute("resultsPerPage", perPage);
+        }
+        if(sortOrder.equals("")){
+            System.out.println("Grabbing sortOrder from session: ");
+            sortOrder = (String) session.getAttribute("sortOrder");
+            if(sortOrder == null){
+                sortOrder = "TITLE ASC, RATING ASC ";
+            }
+            System.out.println(sortOrder);
+        }
+        else{
+            session.setAttribute("sortOrder", sortOrder);
+        }
+
 
         // Output stream to STDOUT
         PrintWriter out = response.getWriter();
@@ -91,53 +124,117 @@ public class MovieListServlet extends HttpServlet {
             Statement statement = conn.createStatement();
             String query;
             int page = 1;
-            int resultsPerPage;
-            String orderBy = " ORDER BY ";
-            if(sortOrder.equals("")){
-                // if going back and thus URL wouldn't specify sortOrder
-                orderBy += (String) session.getAttribute("sortOrder");
-            }
-            else{
-                orderBy += sortOrder;
-                session.setAttribute("sortOrder", orderBy);
-            }
-
-
-            if(perPage.equals("")){
-                // if going back and thus URL wouldn't specify resultsPerPage
-                resultsPerPage = (int) session.getAttribute("resultsPerPage");
-            }
-            else{
-                resultsPerPage = Integer.parseInt(perPage);
-                session.setAttribute("resultsPerPage", resultsPerPage);
-            }
-
-
+            int resultsPerPage = Integer.parseInt(perPage);
             int offset = (page-1) * resultsPerPage;
-            String limitOffset = "LIMIT " + resultsPerPage + " OFFSET " + offset;
 
+            String orderBy = " ORDER BY "; // This may be changed by update or search
 
+            String limitOffset = "LIMIT " + resultsPerPage + " OFFSET " + offset; // this is always auto completed
+            System.out.println(limitOffset);
+            if(filter.equals("browse")){
+                System.out.println("Filter: browse");
+                if(!browseByGenre.equals("")){
+                    // Browse By Genre
+                    query = "SELECT m.id, m.title, m.year, m.director, r.rating FROM movies m, genres_in_movies gim, genres g, ratings r "+
+                            "WHERE m.id = gim.movieId AND gim.genreId = g.id AND g.name = \"" + browseByGenre + "\"" + "AND r.movieId = m.id";
 
-            if(!browseByGenre.equals("")){
-
-                query = "SELECT m.id, m.title, m.year, m.director, r.rating FROM movies m, genres_in_movies gim, genres g, ratings r "+
-                        "WHERE m.id = gim.movieId AND gim.genreId = g.id AND g.name = \"" + browseByGenre + "\"" + "AND r.movieId = m.id" +
-                        orderBy +
-                        limitOffset;
+                }
+                else if(!browseByTitle.equals("")){
+                    // Browse By Title
+                    browseByTitle += "%";
+                    query = "SELECT m.id, m.title, m.year, m.director, r.rating FROM movies m, ratings r WHERE m.title LIKE \"" + browseByTitle + "\"" + "AND r.movieId = m.id";
+                }
+                else{
+                    System.out.println("Return from single page");
+                    // return would still submit a browse but without any parameters
+                    query = (String) session.getAttribute("query");
+                    sortOrder = (String) session.getAttribute("sortOrder");
+                }
+                orderBy += sortOrder;
                 session.setAttribute("query", query);
-
             }
-            else if(!browseByTitle.equals("")){
-                browseByTitle += "%";
-                query = "SELECT m.id, m.title, m.year, m.director, r.rating FROM movies m, ratings r WHERE m.title LIKE \"" + browseByTitle + "\"" + "AND r.movieId = m.id" + orderBy + limitOffset;
+            else if(filter.equals("search")){
+                System.out.println("Search");
+                String select = "SELECT m.id, m.title, m.year, m.director, r.rating ";
+                String from = "FROM movies m, ratings r ";
+                String where = "WHERE m.id = r.movieId ";
+                if(!searchByStar.equals("")){
+                    from += " ,stars_in_movies sim, stars s ";
+                    where += "AND sim.movieId = m.id AND sim.starId = s.id AND s.name LIKE \"%" + searchByStar + "%\"" ;
+                }
+                if(!searchByTitle.equals("")){
+                    where += "AND m.title LIKE \"%" + searchByTitle + "%\" ";
+                }
+                if(!searchByYear.equals("")){
+                    where += "AND m.year = " + searchByYear + " ";
+                }
+                if(!searchByDirector.equals("")){
+                    where += "AND m.director LIKE \"%" + searchByDirector + "%\"";
+                }
+                query = select + from + where;
+
+                session.setAttribute("sortOrder", sortOrder);
+                orderBy += sortOrder;
+
                 session.setAttribute("query", query);
             }
-
-            else{
+            else /*if(filter.equals("update"))*/{
+                System.out.println("Filter: update");
                 query = (String) session.getAttribute("query");
+
+                session.setAttribute("sortOrder", sortOrder);
+                orderBy += sortOrder;
             }
+
+            query = query + orderBy + limitOffset;
 
             System.out.println(query);
+//            String orderBy = " ORDER BY ";
+//            if(sortOrder.equals("")){
+//                // if going back and thus URL wouldn't specify sortOrder
+//                orderBy += (String) session.getAttribute("sortOrder");
+//            }
+//            else{
+//                orderBy += sortOrder;
+//                session.setAttribute("sortOrder", orderBy);
+//            }
+//
+//
+//            if(perPage.equals("")){
+//                // if going back and thus URL wouldn't specify resultsPerPage
+//                resultsPerPage = (int) session.getAttribute("resultsPerPage");
+//            }
+//            else{
+//                resultsPerPage = Integer.parseInt(perPage);
+//                session.setAttribute("resultsPerPage", resultsPerPage);
+//            }
+//
+//
+//            int offset = (page-1) * resultsPerPage;
+//            String limitOffset = "LIMIT " + resultsPerPage + " OFFSET " + offset;
+//
+//
+//
+//            if(!browseByGenre.equals("")){
+//
+//                query = "SELECT m.id, m.title, m.year, m.director, r.rating FROM movies m, genres_in_movies gim, genres g, ratings r "+
+//                        "WHERE m.id = gim.movieId AND gim.genreId = g.id AND g.name = \"" + browseByGenre + "\"" + "AND r.movieId = m.id" +
+//                        orderBy +
+//                        limitOffset;
+//                session.setAttribute("query", query);
+//
+//            }
+//            else if(!browseByTitle.equals("")){
+//                browseByTitle += "%";
+//                query = "SELECT m.id, m.title, m.year, m.director, r.rating FROM movies m, ratings r WHERE m.title LIKE \"" + browseByTitle + "\"" + "AND r.movieId = m.id" + orderBy + limitOffset;
+//                session.setAttribute("query", query);
+//            }
+//
+//            else{
+//                query = (String) session.getAttribute("query");
+//            }
+//
+//            System.out.println(query);
 
             // Perform the query
             ResultSet movieIDSet = statement.executeQuery(query);
