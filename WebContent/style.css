@@ -1,5 +1,6 @@
 
 body {
+    height: 100vh;
     background-color: #EEE9DA;
 }
 h1{
@@ -17,9 +18,57 @@ h3 {
 table {
     border: solid 5px #93BFCF;
     color: #6096B4;
-    margin-left: auto;
-    margin-right: auto;
+    /*margin-left: auto;*/
+    /*margin-right: auto;*/
+    width: 88%;
+    margin: 0 auto;
 }
 th {
     background-color: #93BFCF;
+}
+
+/*.grid text-center{*/
+/*    display: grid;*/
+/*    grid-column-start: 2;*/
+/*    grid-column-end: five;*/
+/*    grid-row-start: row1-start;*/
+/*    grid-row-end: 3;*/
+/*    gap: 10px;*/
+/*}*/
+
+.genre_container {
+    width: 800px;
+    display: grid;
+    text-align: center;
+    vertical-align: center;
+    grid-template-columns: 1fr 1fr 1fr 1fr 1fr;
+    /*grid-template-rows: 1fr 1fr 1fr 1fr 1fr 1fr 1fr 1fr;*/
+    gap: 10px;
+}
+.title_container {
+
+    width: 800px;
+    display: grid;
+    text-align: center;
+    grid-template-columns: 1fr 1fr 1fr 1fr 1fr 1fr 1fr 1fr 1fr 1fr 1fr;
+    /*grid-template-rows: 1fr;*/
+    gap: 10px;
+}
+
+.genreGrid{
+    align-items: center;
+    display: flex;
+    justify-content: center;
+    height: 50px;
+    width: 110px;
+    /*border: 3px solid #6096B4;*/
+    background-color: #BDCDD6;
+}
+.titleGrid{
+    align-items: center;
+    display: flex;
+    justify-content: center;
+    height: 40px;
+    width: 50px;
+    background-color: #BDCDD6;
 }
