@@ -14,29 +14,10 @@
     <link rel="stylesheet" href ="style.css" >
     <title>Login to Fablix</title>
 </head>
-<body class = "text-center" >
-<!--<main class="form-signin w-100 m-auto">-->
-<!--    <form id="login_form" method="post" action="#">-->
-<!--        <svg xmlns="http://www.w3.org/2000/svg" width="35" height="35" fill="currentColor" class="bi bi-camera-reels" viewBox="0 0 16 16">-->
-<!--            <path d="M6 3a3 3 0 1 1-6 0 3 3 0 0 1 6 0zM1 3a2 2 0 1 0 4 0 2 2 0 0 0-4 0z"/>-->
-<!--            <path d="M9 6h.5a2 2 0 0 1 1.983 1.738l3.11-1.382A1 1 0 0 1 16 7.269v7.462a1 1 0 0 1-1.406.913l-3.111-1.382A2 2 0 0 1 9.5 16H2a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h7zm6 8.73V7.27l-3.5 1.555v4.35l3.5 1.556zM1 8v6a1 1 0 0 0 1 1h7.5a1 1 0 0 0 1-1V8a1 1 0 0 0-1-1H2a1 1 0 0 0-1 1z"/>-->
-<!--            <path d="M9 6a3 3 0 1 0 0-6 3 3 0 0 0 0 6zM7 3a2 2 0 1 1 4 0 2 2 0 0 1-4 0z"/>-->
-<!--        </svg>-->
-<!--        <h1 class = "h3 mb-3 fw-normal">Login to Fablix</h1>-->
-<!--        <div class = "form-floating">-->
-<!--            <input name = "email" type="email" class = "form-control" id = "floatingInput" placeholder="Enter Email">-->
-<!--            <label for = "floatingInput"><b>Email Address</b></label>-->
-<!--        </div>-->
-<!--        <div class = "form-floating">-->
-<!--            <input name = "password" type="password" class = "form-control" id = "floatingPassword" placeholder="Password">-->
-<!--            <label for = "floatingPassword"><b>Password</b></label>-->
-<!--        </div>-->
-<!--        <button class="w-100 btn btn-lg btn-primary" type="submit">Sign in</button>-->
-<!--    </form>-->
-<!--</main>-->
+<body class = "loginGrid" >
 
-<div>
-    <svg xmlns="http://www.w3.org/2000/svg" width="35" height="35" fill="currentColor" class="bi bi-camera-reels" viewBox="0 0 16 16">
+<div >
+    <svg xmlns="http://www.w3.org/2000/svg" width="70" height="70" fill="currentColor" class="bi bi-camera-reels" viewBox="0 0 16 16">
         <path d="M6 3a3 3 0 1 1-6 0 3 3 0 0 1 6 0zM1 3a2 2 0 1 0 4 0 2 2 0 0 0-4 0z"/>
         <path d="M9 6h.5a2 2 0 0 1 1.983 1.738l3.11-1.382A1 1 0 0 1 16 7.269v7.462a1 1 0 0 1-1.406.913l-3.111-1.382A2 2 0 0 1 9.5 16H2a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h7zm6 8.73V7.27l-3.5 1.555v4.35l3.5 1.556zM1 8v6a1 1 0 0 0 1 1h7.5a1 1 0 0 0 1-1V8a1 1 0 0 0-1-1H2a1 1 0 0 0-1 1z"/>
         <path d="M9 6a3 3 0 1 0 0-6 3 3 0 0 0 0 6zM7 3a2 2 0 1 1 4 0 2 2 0 0 1-4 0z"/>
@@ -59,10 +40,11 @@
         <br>
         <input type="submit" value="Login">
     </form>
+    <div id="login_error_message"></div>
 </div>
 
 
-<div id="login_error_message"></div>
+
 
 <!-- include jQuery-->
 <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>

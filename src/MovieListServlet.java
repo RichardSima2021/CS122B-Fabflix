@@ -255,7 +255,8 @@ public class MovieListServlet extends HttpServlet {
                         "SELECT s.name, s.id, COUNT(m.id) as movieCount "+
                         "FROM stars_in_this_movie s, movies m, stars_in_movies sim " +
                         "WHERE sim.starId = s.id AND sim.movieId = m.id " +
-                        "GROUP BY s.name ORDER BY movieCount DESC, name ASC LIMIT 3";
+                        "GROUP BY s.name, s.id ORDER BY movieCount DESC, name ASC LIMIT 3";
+                System.out.println(getStarsQuery);
                 Statement getStarsStatement = conn.createStatement();
                 ResultSet topStars = getStarsStatement.executeQuery(getStarsQuery);
                 ArrayList<String> starsList = new ArrayList<>();
