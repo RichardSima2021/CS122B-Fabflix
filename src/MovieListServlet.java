@@ -41,7 +41,7 @@ public class MovieListServlet extends HttpServlet {
      */
     protected void doGet(HttpServletRequest request, HttpServletResponse response) throws IOException {
         response.setContentType("application/json"); // Response mime type
-
+        System.out.println(request.getQueryString());
         // Don't use session to directly store query, use session to reconstruct query
 
         /*
@@ -93,24 +93,24 @@ public class MovieListServlet extends HttpServlet {
         // If session does not currently store results per page - back from single page
         // otherwise results per page are given by the other three scenarios
         if(perPage.equals("")){
-            System.out.println("Grabbing perPage from session: ");
+//            System.out.println("Grabbing perPage from session: ");
             perPage = (String) session.getAttribute("resultsPerPage");
             if(perPage == null){
                 perPage = "10";
             }
-            System.out.println(perPage);
+//            System.out.println(perPage);
         }
         else{
             session.setAttribute("resultsPerPage", perPage);
         }
         if(sortOrder.equals("")){
-            System.out.println("Grabbing sortOrder from session: ");
+//            System.out.println("Grabbing sortOrder from session: ");
             sortOrder = (String) session.getAttribute("sortOrder");
             if(sortOrder == null){
                 sortOrder = "TITLE ASC, RATING ASC ";
                 session.setAttribute("sortOrder",sortOrder);
             }
-            System.out.println(sortOrder);
+//            System.out.println(sortOrder);
         }
         else{
             session.setAttribute("sortOrder", sortOrder);
@@ -131,9 +131,9 @@ public class MovieListServlet extends HttpServlet {
             String orderBy = " ORDER BY "; // This may be changed by update or search
 
             String limitOffset = "LIMIT " + resultsPerPage + " OFFSET " + offset; // this is always auto completed
-            System.out.println(limitOffset);
+//            System.out.println(limitOffset);
             if(filter.equals("browse")){
-                System.out.println("Filter: browse");
+//                System.out.println("Filter: browse");
                 if(!browseByGenre.equals("")){
                     // Browse By Genre
                     query = "SELECT m.id, m.title, m.year, m.director, r.rating FROM movies m, genres_in_movies gim, genres g, ratings r "+
@@ -146,7 +146,7 @@ public class MovieListServlet extends HttpServlet {
                     query = "SELECT m.id, m.title, m.year, m.director, r.rating FROM movies m, ratings r WHERE m.title LIKE \"" + browseByTitle + "\"" + "AND r.movieId = m.id";
                 }
                 else{
-                    System.out.println("Return from single page");
+//                    System.out.println("Return from single page");
                     // return would still submit a browse but without any parameters
                     query = (String) session.getAttribute("query");
                     sortOrder = (String) session.getAttribute("sortOrder");
@@ -155,7 +155,7 @@ public class MovieListServlet extends HttpServlet {
                 session.setAttribute("query", query);
             }
             else if(filter.equals("search")){
-                System.out.println("Search");
+//                System.out.println("Search");
                 String select = "SELECT m.id, m.title, m.year, m.director, r.rating ";
                 String from = "FROM movies m, ratings r ";
                 String where = "WHERE m.id = r.movieId ";
@@ -180,7 +180,7 @@ public class MovieListServlet extends HttpServlet {
                 session.setAttribute("query", query);
             }
             else /*if(filter.equals("update"))*/{
-                System.out.println("Filter: update");
+//                System.out.println("Filter: update");
                 query = (String) session.getAttribute("query");
 
                 session.setAttribute("sortOrder", sortOrder);
@@ -189,7 +189,7 @@ public class MovieListServlet extends HttpServlet {
 
             query = query + orderBy + limitOffset;
 
-            System.out.println(query);
+//            System.out.println(query);
 
             // Perform the query
             ResultSet movieIDSet = statement.executeQuery(query);
@@ -257,7 +257,7 @@ public class MovieListServlet extends HttpServlet {
                         "FROM stars_in_this_movie s, movies m, stars_in_movies sim " +
                         "WHERE sim.starId = s.id AND sim.movieId = m.id " +
                         "GROUP BY s.name, s.id ORDER BY movieCount DESC, name ASC LIMIT 3";
-                System.out.println(getStarsQuery);
+//                System.out.println(getStarsQuery);
                 Statement getStarsStatement = conn.createStatement();
                 ResultSet topStars = getStarsStatement.executeQuery(getStarsQuery);
                 ArrayList<String> starsList = new ArrayList<>();

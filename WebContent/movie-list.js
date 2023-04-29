@@ -35,7 +35,7 @@ function handleError(){
 function handleMovieResult(resultData) {
 
     console.log("handleMovieListResult: populating movie table from resultData");
-
+    console.log(window.location.href);
     // Populate the movie table
     // Find the empty table body by id "star_table_body"
     let starTableBodyElement = jQuery("#movie_table_body");
