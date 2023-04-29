@@ -91,7 +91,7 @@ th {
     text-align: center;
 }
 .item_counter{
-    /*width: 15%;*/
+    width: 100px;
     display: flex;
     justify-content: space-between;
     align-items: center;
