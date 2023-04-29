@@ -189,52 +189,6 @@ public class MovieListServlet extends HttpServlet {
             query = query + orderBy + limitOffset;
 
             System.out.println(query);
-//            String orderBy = " ORDER BY ";
-//            if(sortOrder.equals("")){
-//                // if going back and thus URL wouldn't specify sortOrder
-//                orderBy += (String) session.getAttribute("sortOrder");
-//            }
-//            else{
-//                orderBy += sortOrder;
-//                session.setAttribute("sortOrder", orderBy);
-//            }
-//
-//
-//            if(perPage.equals("")){
-//                // if going back and thus URL wouldn't specify resultsPerPage
-//                resultsPerPage = (int) session.getAttribute("resultsPerPage");
-//            }
-//            else{
-//                resultsPerPage = Integer.parseInt(perPage);
-//                session.setAttribute("resultsPerPage", resultsPerPage);
-//            }
-//
-//
-//            int offset = (page-1) * resultsPerPage;
-//            String limitOffset = "LIMIT " + resultsPerPage + " OFFSET " + offset;
-//
-//
-//
-//            if(!browseByGenre.equals("")){
-//
-//                query = "SELECT m.id, m.title, m.year, m.director, r.rating FROM movies m, genres_in_movies gim, genres g, ratings r "+
-//                        "WHERE m.id = gim.movieId AND gim.genreId = g.id AND g.name = \"" + browseByGenre + "\"" + "AND r.movieId = m.id" +
-//                        orderBy +
-//                        limitOffset;
-//                session.setAttribute("query", query);
-//
-//            }
-//            else if(!browseByTitle.equals("")){
-//                browseByTitle += "%";
-//                query = "SELECT m.id, m.title, m.year, m.director, r.rating FROM movies m, ratings r WHERE m.title LIKE \"" + browseByTitle + "\"" + "AND r.movieId = m.id" + orderBy + limitOffset;
-//                session.setAttribute("query", query);
-//            }
-//
-//            else{
-//                query = (String) session.getAttribute("query");
-//            }
-//
-//            System.out.println(query);
 
             // Perform the query
             ResultSet movieIDSet = statement.executeQuery(query);
