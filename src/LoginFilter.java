@@ -36,7 +36,10 @@ public class LoginFilter implements Filter {
         if (httpRequest.getSession().getAttribute("user") == null) {
 //            System.out.println("User is null for request URI: " + httpRequest.getRequestURI());
 //            System.out.println("Redirecting to login.html");
+
+//            if(httpRequest.)
             httpResponse.sendRedirect("login.html");
+            chain.doFilter(request, response);
         } else {
             chain.doFilter(request, response);
         }

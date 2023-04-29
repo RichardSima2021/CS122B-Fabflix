@@ -65,7 +65,7 @@ public class BrowseServlet extends HttpServlet {
             while (genresResult.next())
             {
                 String genre = genresResult.getString("name");
-                System.out.println(genre);
+//                System.out.println(genre);
                 genresArray.add(genre);
             }
 

@@ -30,7 +30,7 @@ function handleResult(resultData) {
 
     // populate the star info h3
     // find the empty h3 body by id "movie_info"
-    let starInfoElement = jQuery("#genre_info");
+    // let starInfoElement = jQuery("#genre_info");
 
     // // append two html <p> created to the h3 body, which will refresh the page
     // starInfoElement.append("<p id=\"losinfo\">" + resultData[0]["title"]
@@ -56,24 +56,32 @@ function handleResult(resultData) {
         genreTableBodyElement.append(rowHTML);
     }
 
-    // let g = 0;
-    // for(let i = 0 ; i < Math.ceil(resultData['genres'].length/4); i++){
-    //
-    //     let rowHTML = "<div class='genreGrid'>";
-    //     for(let c = 0; c < 4; c++){
-    //         if(g >= resultData['genres'].length){
-    //             break;
-    //         }
-    //         else{
-    //             rowHTML += '<a href="movie-list.html?genre=' + resultData['genres'][g] + '">'
-    //                 + resultData['genres'][g]
-    //                 + ' </a>'
-    //             g += 1;
-    //         }
-    //     }
-    //     rowHTML += "</div>"
-    //     genreTableBodyElement.append(rowHTML);
-    // }
+    // let titleInfoElement = jQuery("#title_info");
+    console.log("handleResult: populating genre table from resultData");
+    let titleTableBodyElement = jQuery("#title_table_body");
+    for (let i = 65; i <=90; i++)
+    {
+        let rowHTML = "";
+        rowHTML += "<div class='titleGrid'>"
+            + '<a href="movie-list.html?title=' + String.fromCharCode(i) + "%"+ '">'
+            + String.fromCharCode(i)
+            + ' </a>'
+            + "</div>";
+        titleTableBodyElement.append(rowHTML);
+    }
+
+    console.log("handleResult: populating genre table from resultData");
+    let digittitleTableBodyElement = jQuery("#digit_title_table_body");
+    for (let i = 0; i <=9; i++)
+    {
+        let rowHTML = "";
+        rowHTML += "<div class='titleGrid'>"
+            + '<a href="movie-list.html?title=' + i + "%"+ '">'
+            + i
+            + ' </a>'
+            + "</div>";
+        digittitleTableBodyElement.append(rowHTML);
+    }
 
 }
 
