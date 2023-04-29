@@ -3,21 +3,8 @@
  * @param target String
  * @returns {*}
  */
-// function getParameterByName(target) {
-//     // Get request URL
-//     let url = window.location.href;
-//     // Encode target parameter name to url encoding
-//     target = target.replace(/[\[\]]/g, "\\$&");
-//
-//     // Ues regular expression to find matched parameter value
-//     let regex = new RegExp("[?&]" + target + "(=([^&#]*)|&|#|$)"),
-//         results = regex.exec(url);
-//     if (!results) return null;
-//     if (!results[2]) return '';
-//
-//     // Return the decoded parameter value
-//     return decodeURIComponent(results[2].replace(/\+/g, " "));
-// }
+
+let search_form = $("#search_form")
 
 /**
  * Handles the data returned by the API, read the jsonObject and populate data into html elements
@@ -63,7 +50,7 @@ function handleResult(resultData) {
     {
         let rowHTML = "";
         rowHTML += "<div class='titleGrid'>"
-            + '<a href="movie-list.html?title=' + String.fromCharCode(i) + "%"+ '">'
+            + '<a href="movie-list.html?title=' + String.fromCharCode(i) + '">'
             + String.fromCharCode(i)
             + ' </a>'
             + "</div>";
@@ -92,6 +79,22 @@ function handleResult(resultData) {
 
 }
 
+function submitSearchForm(formSubmitEvent){
+    // console.log("what's going on here");
+    formSubmitEvent.preventDefault();
+    // console.log("submit search form from browse page");
+
+    let searchURL = "movie-list.html?filter=search";
+    let searchByTitle = "&searchByTitle=" + document.querySelector("#searchTitle").value;
+    let searchByYear = "&searchByYear=" + document.querySelector("#searchYear").value;
+    let searchByDirector = "&searchByDirector=" + document.querySelector("#searchDirector").value;
+    let searchByStar = "&searchByStar=" + document.querySelector("#searchStar").value;
+
+    searchURL = searchURL + searchByTitle + searchByYear + searchByDirector + searchByStar;
+    console.log(searchURL);
+    window.location.replace(searchURL);
+}
+
 /**
  * Once this .js is loaded, following scripts will be executed by the browser\
  */
@@ -106,3 +109,5 @@ jQuery.ajax({
     url: "api/browse", // Setting request url, which is mapped by BrowseServlet in Browse.java
     success: (resultData) => handleResult(resultData) // Setting callback function to handle data returned successfully by the BrowseServlet
 });
+
+search_form.submit(submitSearchForm);

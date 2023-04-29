@@ -55,7 +55,14 @@
 <!--        <td><a href = "movie-list.html?title=D%">  D </a></td>-->
 <!--    </tr>-->
 <!--</table>-->
-
+<form id = "search_form" method = "GET">
+    <label>Search By</label>
+    <input id="searchTitle" placeholder="Title" type = "text">
+    <input id="searchYear" placeholder="Year" type = "number" min="2001">
+    <input id="searchDirector" placeholder="Director" type="text">
+    <input id="searchStar" placeholder="Star" type="text">
+    <input type="submit" value="Search">
+</form>
 
 <!-- Load jQuery and Bootstrap JS -->
 <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>

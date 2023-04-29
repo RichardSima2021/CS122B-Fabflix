@@ -92,6 +92,10 @@ function handleMovieResult(resultData) {
     document.getElementById("pageNumber").innerHTML = resultData[resultData.length-1];
 }
 
+let filter = "search";
+if (getParameterByName("filter") === null){
+    filter = "browse";
+}
 let movieGenre = getParameterByName('genre');
 let movieTitle = getParameterByName('title');
 let sortOrder = null //"TITLE ASC, RATING ASC "; // This is a default value
@@ -216,9 +220,13 @@ jQuery.ajax({
     method: "GET", // Setting request method
     url: "api/movie-list", // Setting request url, which is mapped by MovieListServlet in MovieListServlet.java
     data:{
-        "filter" : "browse",
+        "filter" : filter,
         "browseByGenre": movieGenre,
         "browseByTitle": movieTitle,
+        "searchByTitle" : getParameterByName("searchByTitle"),
+        "searchByYear" : getParameterByName("searchByYear"),
+        "searchByDirector" : getParameterByName("searchByDirector"),
+        "searchByStar" : getParameterByName("searchByStar"),
         "sortOrder": sortOrder,
         "perPage": perPage
     },

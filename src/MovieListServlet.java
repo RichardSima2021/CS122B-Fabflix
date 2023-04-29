@@ -41,7 +41,7 @@ public class MovieListServlet extends HttpServlet {
      */
     protected void doGet(HttpServletRequest request, HttpServletResponse response) throws IOException {
         response.setContentType("application/json"); // Response mime type
-//        System.out.println(request.getQueryString());
+        System.out.println(request.getQueryString());
         // Don't use session to directly store query, use session to reconstruct query
 
         /*
@@ -199,17 +199,17 @@ public class MovieListServlet extends HttpServlet {
                 String select = "SELECT m.id, m.title, m.year, m.director ";
                 String from = "FROM movies m ";
                 String where = "WHERE m.id = m.id ";
-                if(!searchByStar.equals("")){
+                if(searchByStar != null && !searchByStar.equals("")){
                     from += " ,stars_in_movies sim, stars s ";
                     where += "AND sim.movieId = m.id AND sim.starId = s.id AND s.name LIKE \"%" + searchByStar + "%\"" ;
                 }
-                if(!searchByTitle.equals("")){
+                if(searchByTitle != null && !searchByTitle.equals("")){
                     where += "AND m.title LIKE \"%" + searchByTitle + "%\" ";
                 }
-                if(!searchByYear.equals("")){
+                if(searchByYear != null && !searchByYear.equals("")){
                     where += "AND m.year = " + searchByYear + " ";
                 }
-                if(!searchByDirector.equals("")){
+                if(searchByDirector!= null && !searchByDirector.equals("")){
                     where += "AND m.director LIKE \"%" + searchByDirector + "%\"";
                 }
                 where += ")";
