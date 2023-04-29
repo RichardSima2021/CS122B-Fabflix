@@ -41,7 +41,7 @@ public class MovieListServlet extends HttpServlet {
      */
     protected void doGet(HttpServletRequest request, HttpServletResponse response) throws IOException {
         response.setContentType("application/json"); // Response mime type
-        System.out.println(request.getQueryString());
+//        System.out.println(request.getQueryString());
         // Don't use session to directly store query, use session to reconstruct query
 
         /*
@@ -88,6 +88,12 @@ public class MovieListServlet extends HttpServlet {
         String searchByDirector = request.getParameter("searchByDirector");
         String searchByStar = request.getParameter("searchByStar");
 
+//        String pageNumStr = request.getParameter("pageNum");
+
+//        if(request.getParameter("page").equals("")){
+//
+//        }
+
         HttpSession session = request.getSession();
 
         // If session does not currently store results per page - back from single page
@@ -115,7 +121,8 @@ public class MovieListServlet extends HttpServlet {
         else{
             session.setAttribute("sortOrder", sortOrder);
         }
-        
+
+//        System.out.println("Tf");
 
         // Output stream to STDOUT
         PrintWriter out = response.getWriter();
@@ -123,7 +130,8 @@ public class MovieListServlet extends HttpServlet {
         try (Connection conn = dataSource.getConnection()) {
             // Declare our statement
             Statement statement = conn.createStatement();
-            String query;
+            String query = "WITH filtered AS( ";
+            String selectFiltered = "SELECT f.id, f.title, f.year, f.director, IFNULL(r.rating,0) FROM filtered f LEFT JOIN ratings r ON f.id = r.movieId";
             int page = 1;
             int resultsPerPage = Integer.parseInt(perPage);
             int offset = (page-1) * resultsPerPage;
@@ -136,14 +144,20 @@ public class MovieListServlet extends HttpServlet {
 //                System.out.println("Filter: browse");
                 if(!browseByGenre.equals("")){
                     // Browse By Genre
-                    query = "SELECT m.id, m.title, m.year, m.director, r.rating FROM movies m, genres_in_movies gim, genres g, ratings r "+
-                            "WHERE m.id = gim.movieId AND gim.genreId = g.id AND g.name = \"" + browseByGenre + "\"" + "AND r.movieId = m.id";
+                    query += "SELECT m.id, m.title, m.year, m.director FROM movies m, genres_in_movies gim, genres g "+
+                            "WHERE m.id = gim.movieId AND gim.genreId = g.id AND g.name = \"" + browseByGenre + "\")";
 
                 }
                 else if(!browseByTitle.equals("")){
                     // Browse By Title
-                    browseByTitle += "%";
-                    query = "SELECT m.id, m.title, m.year, m.director, r.rating FROM movies m, ratings r WHERE m.title LIKE \"" + browseByTitle + "\"" + "AND r.movieId = m.id";
+                    if(browseByTitle.equals("*")){
+                        query += "SELECT m.id, m.title, m.year, m.director FROM movies m WHERE m.title REGEXP '^[^a-zA-Z0-9]')";
+                    }
+                    else{
+                        browseByTitle += "%";
+                        query += "SELECT m.id, m.title, m.year, m.director FROM movies m WHERE m.title LIKE \"" + browseByTitle + "\")";
+                    }
+
                 }
                 else{
 //                    System.out.println("Return from single page");
@@ -156,9 +170,10 @@ public class MovieListServlet extends HttpServlet {
             }
             else if(filter.equals("search")){
 //                System.out.println("Search");
-                String select = "SELECT m.id, m.title, m.year, m.director, r.rating ";
-                String from = "FROM movies m, ratings r ";
-                String where = "WHERE m.id = r.movieId ";
+                String withStatement = "WITH filtered AS(";
+                String select = "SELECT m.id, m.title, m.year, m.director ";
+                String from = "FROM movies m ";
+                String where = "WHERE m.id = m.id ";
                 if(!searchByStar.equals("")){
                     from += " ,stars_in_movies sim, stars s ";
                     where += "AND sim.movieId = m.id AND sim.starId = s.id AND s.name LIKE \"%" + searchByStar + "%\"" ;
@@ -172,7 +187,8 @@ public class MovieListServlet extends HttpServlet {
                 if(!searchByDirector.equals("")){
                     where += "AND m.director LIKE \"%" + searchByDirector + "%\"";
                 }
-                query = select + from + where;
+                where += ")";
+                query = withStatement + select + from + where;
 
                 session.setAttribute("sortOrder", sortOrder);
                 orderBy += sortOrder;
@@ -187,9 +203,11 @@ public class MovieListServlet extends HttpServlet {
                 orderBy += sortOrder;
             }
 
-            query = query + orderBy + limitOffset;
+            query = query + selectFiltered + orderBy + limitOffset;
 
-//            System.out.println(query);
+//            System.out.println("debug");
+            System.out.println(query);
+//            System.out.println("debug");
 
             // Perform the query
             ResultSet movieIDSet = statement.executeQuery(query);

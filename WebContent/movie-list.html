@@ -68,6 +68,8 @@
 
 
 
+
+
 <!-- Id "movie_table" is useful for jQuery to find the html element with id, class here is mapping to Bootstrap defined class CSS -->
 <table id=movie_table class="table table-striped table-hover">
     <!-- Create a table header -->
@@ -86,6 +88,14 @@
     <!-- Again, id "star_table_body" is useful for jQuery to find this html element -->
     <tbody id=movie_table_body></tbody>
 </table>
+
+<div id="pageNumberDiv">
+    <button id="previousButton">&laquo; Prev</button>
+    <ins id="pageNumber">1</ins>
+    <button id="nextButton">Next &raquo;</button>
+</div>
+
+
 
 <!-- Load jQuery and Bootstrap JS -->
 <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>

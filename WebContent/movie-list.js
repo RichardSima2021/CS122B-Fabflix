@@ -35,7 +35,7 @@ function handleError(){
 function handleMovieResult(resultData) {
 
     console.log("handleMovieListResult: populating movie table from resultData");
-    console.log(window.location.href);
+    // console.log(window.location.href);
     // Populate the movie table
     // Find the empty table body by id "star_table_body"
     let starTableBodyElement = jQuery("#movie_table_body");
@@ -101,7 +101,8 @@ updateButton.addEventListener("click", function() {
         data:{
             "filter" : "update",
             "sortOrder": sortOrder,
-            "perPage": perPage
+            "perPage": perPage,
+            "pageNum" : 1
         },
         error: handleError(),
         success: (resultData) => handleMovieResult(resultData) // Setting callback function to handle data returned successfully by the MovieListServlet
@@ -109,15 +110,56 @@ updateButton.addEventListener("click", function() {
     });
 });
 
+var prevButton = document.getElementById("previousButton");
+prevButton.addEventListener("click",prevPageClicked);
+function prevPageClicked(){
+    console.log("prev button clicked");
+    let currentPage = parseInt(document.getElementById("pageNumber").textContent);
+    console.log(currentPage);
+    if(currentPage === 1){
+        console.log("Already page 1");
+        window.alert("Already on Page 1");
+    }
+    else{
+        console.log("Going to previous page")
+        document.getElementById("pageNumber").innerHTML = currentPage-1
+        // repopulate movie list data
+    }
+}
+var nextButton = document.getElementById("nextButton");
+nextButton.addEventListener("click",nextPageClicked);
+function noNext(){
+
+}
+function nextPageClicked(){
+    console.log("next button clicked");
+    let currentPage = parseInt(document.getElementById("pageNumber").textContent);
+    console.log(currentPage);
+    // Check if there is a next page to go to:
+    // How do I do this
+
+    // jQuery.ajax({
+    //     dataType:"json",
+    //     url:"api/movie-list",
+    //     method: "GET",
+    //     data:{
+    //         "filter" : "update",
+    //         "sortOrder" : document.getElementById("sort").value,
+    //         "perPage" : document.getElementById("perPage").value,
+    //         "pageNum" : currentPage+1
+    //     },
+    //     error: noNext(),
+    //     success: (resultData) => handleMovieResult(resultData)
+    // })
+    console.log("Go to next page");
+    document.getElementById("pageNumber").innerHTML = currentPage+1;
+    // pageNumberElement.empty();
+    // pageNumberElement.append(currentPage+1)
+}
+
+
 function submitSearchForm(formSubmitEvent) {
     console.log("submit search form");
-    // console.log(document.getElementById("sort").value);
-    // console.log(document.querySelector("#searchTitle").value);
-    /**
-     * When users click the submit button, the browser will not direct
-     * users to the url defined in HTML form. Instead, it will call this
-     * event handler when the event is triggered.
-     */
     formSubmitEvent.preventDefault();
 
     jQuery.ajax({
@@ -132,9 +174,9 @@ function submitSearchForm(formSubmitEvent) {
                     "searchByDirector" : document.querySelector("#searchDirector").value,
                     "searchByStar" : document.querySelector("#searchStar").value,
                     "sortOrder" : document.getElementById("sort").value,
-                    "perPage" : document.getElementById("perPage").value
+                    "perPage" : document.getElementById("perPage").value,
+                    "pageNum" : 1
                 },
-        // NEED TO FIND SOME WAY TO SEND THIS DATA ACROSS
             success: (resultData) => handleMovieResult(resultData)
         }
     );
@@ -153,7 +195,8 @@ jQuery.ajax({
         "browseByGenre": movieGenre,
         "browseByTitle": movieTitle,
         "sortOrder": sortOrder,
-        "perPage": perPage
+        "perPage": perPage,
+        "pageNum" : 1
     },
     error: handleError(),
     success: (resultData) => handleMovieResult(resultData) // Setting callback function to handle data returned successfully by the MovieListServlet
