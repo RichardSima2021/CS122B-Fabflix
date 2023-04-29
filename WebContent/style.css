@@ -72,3 +72,13 @@ th {
     width: 50px;
     background-color: #BDCDD6;
 }
+
+.loginGrid{
+    display: flex;
+    align-content: center;
+    flex-wrap: wrap;
+    justify-content: center;
+    align-items: center;
+    flex-direction: column;
+    text-align: center;
+}
