@@ -41,7 +41,7 @@ public class MovieListServlet extends HttpServlet {
      */
     protected void doGet(HttpServletRequest request, HttpServletResponse response) throws IOException {
         response.setContentType("application/json"); // Response mime type
-        System.out.println(request.getQueryString());
+//        System.out.println(request.getQueryString());
         // Don't use session to directly store query, use session to reconstruct query
 
         /*
@@ -90,34 +90,34 @@ public class MovieListServlet extends HttpServlet {
 
         String pageNumStr = request.getParameter("pageNum");
 
-        System.out.println("Parameters requested");
+//        System.out.println("Parameters requested");
         int page;
 
 
         HttpSession session = request.getSession();
-        System.out.println("Session retrieved");
+//        System.out.println("Session retrieved");
 
         if(pageNumStr == null){
-            System.out.println("JS didn't send a page number");
+//            System.out.println("JS didn't send a page number");
             // came back from another page, no pageNum info
             if(session.getAttribute("currentPageStr") == null){
                 page = 1;
                 session.setAttribute("currentPageStr", 1);
-                System.out.println("There was no stored page number in session, it's now 1");
+//                System.out.println("There was no stored page number in session, it's now 1");
             }
             else{
                 page = (int) session.getAttribute("currentPageStr");
-                System.out.println("Retrieved page number " + page + " from session");
+//                System.out.println("Retrieved page number " + page + " from session");
             }
         }
         else{
-            System.out.println("JS sent a page number");
+//            System.out.println("JS sent a page number");
             page = Integer.parseInt(pageNumStr);
             session.setAttribute("currentPageStr",page);
-            System.out.println("page number is " + page);
+//            System.out.println("page number is " + page);
         }
 
-        System.out.println("Currently on page " + page);
+//        System.out.println("Currently on page " + page);
 
         // If session does not currently store results per page - back from single page
         // otherwise results per page are given by the other three scenarios
@@ -132,7 +132,7 @@ public class MovieListServlet extends HttpServlet {
         else{
             session.setAttribute("resultsPerPage", perPage);
         }
-        System.out.println(perPage + " per page");
+//        System.out.println(perPage + " per page");
         if(sortOrder.equals("")){
 //            System.out.println("Grabbing sortOrder from session: ");
             sortOrder = (String) session.getAttribute("sortOrder");
@@ -145,7 +145,7 @@ public class MovieListServlet extends HttpServlet {
         else{
             session.setAttribute("sortOrder", sortOrder);
         }
-        System.out.println("Sort by " + sortOrder);
+//        System.out.println("Sort by " + sortOrder);
 
 //        System.out.println("Tf");
 
@@ -231,7 +231,7 @@ public class MovieListServlet extends HttpServlet {
             query = query + selectFiltered + orderBy + limitOffset;
 
 //            System.out.println("debug");
-            System.out.println(query);
+//            System.out.println(query);
 //            System.out.println("debug");
 
             // Perform the query
