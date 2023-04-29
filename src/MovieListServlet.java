@@ -41,7 +41,7 @@ public class MovieListServlet extends HttpServlet {
      */
     protected void doGet(HttpServletRequest request, HttpServletResponse response) throws IOException {
         response.setContentType("application/json"); // Response mime type
-//        System.out.println(request.getQueryString());
+        System.out.println(request.getQueryString());
         // Don't use session to directly store query, use session to reconstruct query
 
         /*
@@ -88,13 +88,36 @@ public class MovieListServlet extends HttpServlet {
         String searchByDirector = request.getParameter("searchByDirector");
         String searchByStar = request.getParameter("searchByStar");
 
-//        String pageNumStr = request.getParameter("pageNum");
+        String pageNumStr = request.getParameter("pageNum");
 
-//        if(request.getParameter("page").equals("")){
-//
-//        }
+        System.out.println("Parameters requested");
+        int page;
+
 
         HttpSession session = request.getSession();
+        System.out.println("Session retrieved");
+
+        if(pageNumStr == null){
+            System.out.println("JS didn't send a page number");
+            // came back from another page, no pageNum info
+            if(session.getAttribute("currentPageStr") == null){
+                page = 1;
+                session.setAttribute("currentPageStr", 1);
+                System.out.println("There was no stored page number in session, it's now 1");
+            }
+            else{
+                page = (int) session.getAttribute("currentPageStr");
+                System.out.println("Retrieved page number " + page + " from session");
+            }
+        }
+        else{
+            System.out.println("JS sent a page number");
+            page = Integer.parseInt(pageNumStr);
+            session.setAttribute("currentPageStr",page);
+            System.out.println("page number is " + page);
+        }
+
+        System.out.println("Currently on page " + page);
 
         // If session does not currently store results per page - back from single page
         // otherwise results per page are given by the other three scenarios
@@ -104,11 +127,12 @@ public class MovieListServlet extends HttpServlet {
             if(perPage == null){
                 perPage = "10";
             }
-//            System.out.println(perPage);
+//            System.out.println(perPage + "per Page");
         }
         else{
             session.setAttribute("resultsPerPage", perPage);
         }
+        System.out.println(perPage + " per page");
         if(sortOrder.equals("")){
 //            System.out.println("Grabbing sortOrder from session: ");
             sortOrder = (String) session.getAttribute("sortOrder");
@@ -121,6 +145,7 @@ public class MovieListServlet extends HttpServlet {
         else{
             session.setAttribute("sortOrder", sortOrder);
         }
+        System.out.println("Sort by " + sortOrder);
 
 //        System.out.println("Tf");
 
@@ -132,7 +157,7 @@ public class MovieListServlet extends HttpServlet {
             Statement statement = conn.createStatement();
             String query = "WITH filtered AS( ";
             String selectFiltered = "SELECT f.id, f.title, f.year, f.director, IFNULL(r.rating,0) FROM filtered f LEFT JOIN ratings r ON f.id = r.movieId";
-            int page = 1;
+//            int page = 1;
             int resultsPerPage = Integer.parseInt(perPage);
             int offset = (page-1) * resultsPerPage;
 
@@ -212,9 +237,12 @@ public class MovieListServlet extends HttpServlet {
             // Perform the query
             ResultSet movieIDSet = statement.executeQuery(query);
             JsonArray jsonArray = new JsonArray();
-
-            while(movieIDSet.next()){
-                // For each movie in the result set:
+            if(movieIDSet.next() == false){
+                throw new RuntimeException("no results on this page");
+            }
+            else{
+                do{
+                    // For each movie in the result set:
                 /*
 
                 Test movieIDs:
@@ -237,85 +265,89 @@ public class MovieListServlet extends HttpServlet {
                 rating
 
                  */
-                JsonObject movieInfo = new JsonObject();
+                    JsonObject movieInfo = new JsonObject();
 
-                String movieID = movieIDSet.getString("id");
-                String title = movieIDSet.getString("title");
-                int year = movieIDSet.getInt("year");
-                String director = movieIDSet.getString("director");
+                    String movieID = movieIDSet.getString("id");
+                    String title = movieIDSet.getString("title");
+                    int year = movieIDSet.getInt("year");
+                    String director = movieIDSet.getString("director");
 
-                movieInfo.addProperty("movieID", movieID);
-                movieInfo.addProperty("title", title);
-                movieInfo.addProperty("year", year);
-                movieInfo.addProperty("director", director);
-
-
-                String getGenresQuery = "SELECT DISTINCT g.name FROM genres g, genres_in_movies gim WHERE gim.movieId = \"" + movieID + "\" AND gim.genreId = g.id";
-                Statement getGenresStatement = conn.createStatement();
-                ResultSet genresSet = getGenresStatement.executeQuery(getGenresQuery);
-                ArrayList<String> genresList = new ArrayList<>();
-                while(genresSet.next()){
-                    genresList.add(genresSet.getString("name"));
-                }
-                Collections.sort(genresList);
-                JsonArray genreJsonArr = new JsonArray();
-
-                for(int i = 0; (i < genresList.size() && i < 3); i++){
-                    genreJsonArr.add( genresList.get(i));
-                }
-                movieInfo.add("genres", genreJsonArr);
-                genresSet.close();
+                    movieInfo.addProperty("movieID", movieID);
+                    movieInfo.addProperty("title", title);
+                    movieInfo.addProperty("year", year);
+                    movieInfo.addProperty("director", director);
 
 
+                    String getGenresQuery = "SELECT DISTINCT g.name FROM genres g, genres_in_movies gim WHERE gim.movieId = \"" + movieID + "\" AND gim.genreId = g.id";
+                    Statement getGenresStatement = conn.createStatement();
+                    ResultSet genresSet = getGenresStatement.executeQuery(getGenresQuery);
+                    ArrayList<String> genresList = new ArrayList<>();
+                    while(genresSet.next()){
+                        genresList.add(genresSet.getString("name"));
+                    }
+                    Collections.sort(genresList);
+                    JsonArray genreJsonArr = new JsonArray();
 
-                String getStarsQuery = "WITH stars_in_this_movie AS("+
-                        "SELECT s1.id, s1.name FROM stars s1, stars_in_movies sim1 "+
-                        "WHERE sim1.movieId = \"" + movieID + "\" AND sim1.starId = s1.Id) " +
-                        "SELECT s.name, s.id, COUNT(m.id) as movieCount "+
-                        "FROM stars_in_this_movie s, movies m, stars_in_movies sim " +
-                        "WHERE sim.starId = s.id AND sim.movieId = m.id " +
-                        "GROUP BY s.name, s.id ORDER BY movieCount DESC, name ASC LIMIT 3";
+                    for(int i = 0; (i < genresList.size() && i < 3); i++){
+                        genreJsonArr.add( genresList.get(i));
+                    }
+                    movieInfo.add("genres", genreJsonArr);
+                    genresSet.close();
+
+
+
+                    String getStarsQuery = "WITH stars_in_this_movie AS("+
+                            "SELECT s1.id, s1.name FROM stars s1, stars_in_movies sim1 "+
+                            "WHERE sim1.movieId = \"" + movieID + "\" AND sim1.starId = s1.Id) " +
+                            "SELECT s.name, s.id, COUNT(m.id) as movieCount "+
+                            "FROM stars_in_this_movie s, movies m, stars_in_movies sim " +
+                            "WHERE sim.starId = s.id AND sim.movieId = m.id " +
+                            "GROUP BY s.name, s.id ORDER BY movieCount DESC, name ASC LIMIT 3";
 //                System.out.println(getStarsQuery);
-                Statement getStarsStatement = conn.createStatement();
-                ResultSet topStars = getStarsStatement.executeQuery(getStarsQuery);
-                ArrayList<String> starsList = new ArrayList<>();
-                ArrayList<String> starsIDList = new ArrayList<>();
+                    Statement getStarsStatement = conn.createStatement();
+                    ResultSet topStars = getStarsStatement.executeQuery(getStarsQuery);
+                    ArrayList<String> starsList = new ArrayList<>();
+                    ArrayList<String> starsIDList = new ArrayList<>();
 
-                while(topStars.next()){
-                    starsList.add(topStars.getString("name"));
-                    starsIDList.add(topStars.getString("id"));
-                }
+                    while(topStars.next()){
+                        starsList.add(topStars.getString("name"));
+                        starsIDList.add(topStars.getString("id"));
+                    }
 
-                JsonArray starsJsonArr = new JsonArray();
-                JsonArray starsIDJsonArr = new JsonArray();
-                for(int i = 0; (i<starsList.size() && i < 3); i++){
-                    starsJsonArr.add(starsList.get(i));
-                    starsIDJsonArr.add(starsIDList.get(i));
-                }
-                movieInfo.add("stars_name", starsJsonArr);
-                movieInfo.add("stars_id", starsIDJsonArr);
-                topStars.close();
+                    JsonArray starsJsonArr = new JsonArray();
+                    JsonArray starsIDJsonArr = new JsonArray();
+                    for(int i = 0; (i<starsList.size() && i < 3); i++){
+                        starsJsonArr.add(starsList.get(i));
+                        starsIDJsonArr.add(starsIDList.get(i));
+                    }
+                    movieInfo.add("stars_name", starsJsonArr);
+                    movieInfo.add("stars_id", starsIDJsonArr);
+                    topStars.close();
 
 
 
-                String getRatingQuery = "SELECT rating FROM ratings WHERE movieId = \"" + movieID + "\"";
-                Statement getRatingStatement = conn.createStatement();
-                ResultSet ratingRes = getRatingStatement.executeQuery(getRatingQuery);
-                if(ratingRes.next() == false){
-                    movieInfo.addProperty("rating","N/A");
-                }
-                else{
+                    String getRatingQuery = "SELECT rating FROM ratings WHERE movieId = \"" + movieID + "\"";
+                    Statement getRatingStatement = conn.createStatement();
+                    ResultSet ratingRes = getRatingStatement.executeQuery(getRatingQuery);
+                    if(ratingRes.next() == false){
+                        movieInfo.addProperty("rating","N/A");
+                    }
+                    else{
 //                    ratingRes.next();
-                    float rating = ratingRes.getFloat("rating");
-                    movieInfo.addProperty("rating",rating);
-                }
+                        float rating = ratingRes.getFloat("rating");
+                        movieInfo.addProperty("rating",rating);
+                    }
 
 
-                ratingRes.close();
+                    ratingRes.close();
 
 
-                jsonArray.add(movieInfo);
+                    jsonArray.add(movieInfo);
+                }while(movieIDSet.next());
             }
+
+              //sends page number back out
+            jsonArray.add(page);
 
             movieIDSet.close();
             statement.close();
@@ -323,7 +355,7 @@ public class MovieListServlet extends HttpServlet {
 
             // Log to localhost log
             request.getServletContext().log("getting " + jsonArray.size() + " results");
-
+//            System.out.println(jsonArray.size());
             // Write JSON string to output
             out.write(jsonArray.toString());
             // Set response status to 200 (OK)

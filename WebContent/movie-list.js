@@ -41,7 +41,7 @@ function handleMovieResult(resultData) {
     let starTableBodyElement = jQuery("#movie_table_body");
     starTableBodyElement.empty();
     // Iterate through resultData
-    for (let i = 0; i < resultData.length; i++) {
+    for (let i = 0; i < resultData.length-1; i++) {
 
         // Concatenate the html tags with resultData jsonObject
         let rowHTML = "";
@@ -80,6 +80,7 @@ function handleMovieResult(resultData) {
         // Append the row created to the table body, which will refresh the page
         starTableBodyElement.append(rowHTML);
     }
+    document.getElementById("pageNumber").innerHTML = resultData[resultData.length-1];
 }
 
 let movieGenre = getParameterByName('genre');
@@ -112,6 +113,9 @@ updateButton.addEventListener("click", function() {
 
 var prevButton = document.getElementById("previousButton");
 prevButton.addEventListener("click",prevPageClicked);
+function noPrev(){
+
+}
 function prevPageClicked(){
     console.log("prev button clicked");
     let currentPage = parseInt(document.getElementById("pageNumber").textContent);
@@ -123,7 +127,19 @@ function prevPageClicked(){
     else{
         console.log("Going to previous page")
         document.getElementById("pageNumber").innerHTML = currentPage-1
-        // repopulate movie list data
+        jQuery.ajax({
+            dataType:"json",
+            url:"api/movie-list",
+            method: "GET",
+            data:{
+                "filter" : "update",
+                "sortOrder" : document.getElementById("sort").value,
+                "perPage" : document.getElementById("perPage").value,
+                "pageNum" : currentPage-1
+            },
+            error: noNext(),
+            success: (resultData) => handleMovieResult(resultData)
+        })
     }
 }
 var nextButton = document.getElementById("nextButton");
@@ -138,21 +154,21 @@ function nextPageClicked(){
     // Check if there is a next page to go to:
     // How do I do this
 
-    // jQuery.ajax({
-    //     dataType:"json",
-    //     url:"api/movie-list",
-    //     method: "GET",
-    //     data:{
-    //         "filter" : "update",
-    //         "sortOrder" : document.getElementById("sort").value,
-    //         "perPage" : document.getElementById("perPage").value,
-    //         "pageNum" : currentPage+1
-    //     },
-    //     error: noNext(),
-    //     success: (resultData) => handleMovieResult(resultData)
-    // })
+    jQuery.ajax({
+        dataType:"json",
+        url:"api/movie-list",
+        method: "GET",
+        data:{
+            "filter" : "update",
+            "sortOrder" : document.getElementById("sort").value,
+            "perPage" : document.getElementById("perPage").value,
+            "pageNum" : currentPage+1
+        },
+        error: noNext(),
+        success: (resultData) => handleMovieResult(resultData)
+    })
     console.log("Go to next page");
-    document.getElementById("pageNumber").innerHTML = currentPage+1;
+    // document.getElementById("pageNumber").innerHTML = currentPage+1;
     // pageNumberElement.empty();
     // pageNumberElement.append(currentPage+1)
 }
@@ -195,8 +211,7 @@ jQuery.ajax({
         "browseByGenre": movieGenre,
         "browseByTitle": movieTitle,
         "sortOrder": sortOrder,
-        "perPage": perPage,
-        "pageNum" : 1
+        "perPage": perPage
     },
     error: handleError(),
     success: (resultData) => handleMovieResult(resultData) // Setting callback function to handle data returned successfully by the MovieListServlet
