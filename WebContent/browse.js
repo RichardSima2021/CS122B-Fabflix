@@ -76,12 +76,19 @@ function handleResult(resultData) {
     {
         let rowHTML = "";
         rowHTML += "<div class='titleGrid'>"
-            + '<a href="movie-list.html?title=' + i + "%"+ '">'
+            + '<a href="movie-list.html?title=' + i + '">'
             + i
             + ' </a>'
             + "</div>";
         digittitleTableBodyElement.append(rowHTML);
     }
+    let rowHTML = "";
+    rowHTML += "<div class='titleGrid'>"
+        + '<a href="movie-list.html?title=' + "*" + '">'
+        + "*"
+        + ' </a>'
+        + "</div>";
+    digittitleTableBodyElement.append(rowHTML);
 
 }
 
