@@ -216,7 +216,7 @@ th {
 }
 
 .pagination_set{
-    width: 15%;
+    width: 160px;
     display: flex;
     flex-direction: row;
     justify-content: space-between;
