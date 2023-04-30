@@ -14,31 +14,47 @@
     <link rel="stylesheet" href ="style.css" >
     <title>Login to Fablix</title>
 </head>
-<body class = "loginGrid" >
+<body class = "body payment_body" >
 
-<div >
+<div class = "payment_container">
     <svg xmlns="http://www.w3.org/2000/svg" width="70" height="70" fill="currentColor" class="bi bi-camera-reels" viewBox="0 0 16 16">
         <path d="M6 3a3 3 0 1 1-6 0 3 3 0 0 1 6 0zM1 3a2 2 0 1 0 4 0 2 2 0 0 0-4 0z"/>
         <path d="M9 6h.5a2 2 0 0 1 1.983 1.738l3.11-1.382A1 1 0 0 1 16 7.269v7.462a1 1 0 0 1-1.406.913l-3.111-1.382A2 2 0 0 1 9.5 16H2a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h7zm6 8.73V7.27l-3.5 1.555v4.35l3.5 1.556zM1 8v6a1 1 0 0 0 1 1h7.5a1 1 0 0 0 1-1V8a1 1 0 0 0-1-1H2a1 1 0 0 0-1 1z"/>
         <path d="M9 6a3 3 0 1 0 0-6 3 3 0 0 0 0 6zM7 3a2 2 0 1 1 4 0 2 2 0 0 1-4 0z"/>
     </svg>
-    <h2>Login to Fablix</h2>
+    <span class = "payment_head">Login to Fablix</span>
+<!--    <h2>Login to Fablix</h2>-->
     <!-- Set the method to POST to avoid showing the username/password in the URL
          The default action is disabled to allow your own implementation. -->
 
     <form id="login_form" method="post" action="#">
 
-        <label><b>Email   </b></label>
-        <label>
-            <input name="email" placeholder="Enter Email" type="text">
-        </label>
-        <br>
-        <label><b>Password</b></label>
-        <label>
-            <input name="password" placeholder="Enter Password" type="password">
-        </label>
-        <br>
-        <input type="submit" value="Login">
+        <div class = "name_input" style="display: grid; grid-row-gap: 3px">
+            <div class="input-group flex-nowrap">
+                <span class="input-group-text" style="width:30%; display: flex; justify-content: center;">Email</span>
+                <input type = "text" class="form-control" name = "email" placeholder="Enter Email">
+            </div>
+            <div class="input-group flex-nowrap ">
+                <span class="input-group-text" style="width:30%;display: flex;justify-content: center;">Password</span>
+                <input type = "password" class="form-control" name = "password" placeholder="Enter Password">
+            </div>
+            <button type="submit" class="btn btn-outline-secondary btn-md" style=" font-weight: bold">Login</button>
+
+        </div>
+
+
+
+<!--        <label><b>Email</b></label>-->
+<!--        <label>-->
+<!--            <input name="email" placeholder="Enter Email" type="text">-->
+<!--        </label>-->
+<!--        <br>-->
+<!--        <label><b>Password</b></label>-->
+<!--        <label>-->
+<!--            <input name="password" placeholder="Enter Password" type="password">-->
+<!--        </label>-->
+<!--        <br>-->
+<!--        <input type="submit" value="Login">-->
     </form>
     <div id="login_error_message"></div>
 </div>
