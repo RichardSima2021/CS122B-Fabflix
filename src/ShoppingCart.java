@@ -35,15 +35,24 @@ public class ShoppingCart {
         }
     }
 
-    public void reduceItem(String itemName, int quantity) {
+    public void modifyItemCount(String itemName, int quantity) {
         for (CartItem item : items) {
             if (item.getItemName().equals(itemName)) {
-                int newQuantity = item.getQuantity() - quantity;
+                int newQuantity = item.getQuantity() + quantity;
                 if (newQuantity <= 0) {
                     items.remove(item);
                 } else {
                     item.setQuantity(newQuantity);
                 }
+                break;
+            }
+        }
+    }
+
+    public void removeItem(String itemName){
+        for(int i = 0; i < items.size(); i++){
+            if(items.get(i).getItemName().equals(itemName)){
+                items.remove(items.get(i));
                 break;
             }
         }

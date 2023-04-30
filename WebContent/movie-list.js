@@ -221,11 +221,6 @@ function submitSearchForm(formSubmitEvent) {
 
 function AddToCartButtonsClicked(event){
     console.log("cart_plus button clicked");
-    // if(event.target.className === )
-    // console.log("event: " + event);
-    // console.log("event target: " + event.target);
-    // console.log("event target classname: " + event.target.tagName);
-    // console.log("---------------");
     let row;
     if (event.target.tagName === "BUTTON") {
         row = event.target.parentNode.parentNode;

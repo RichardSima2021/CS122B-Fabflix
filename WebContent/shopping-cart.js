@@ -60,9 +60,12 @@ function handleCartResult(resultData) {
             "                    </button></a>\n" +
             "                </div>\n" +
             "            </td>\n";
-        // TODO: add price element
         rowHTML +=
+            // price of item
             "            <td>" + resultData["items"][i][2] + "</td>\n";
+            // Subtotal of quantity * item
+        rowHTML +=
+            "            <td>" + resultData["items"][i][3] + "</td>\n";
         rowHTML +=
             "            <td style=\"display: flex; justify-content: center\">" +
             "                        <a><button  name = \"remove_button\" type=\"button\" class=\"btn btn-outline-secondary btn-sm\" style=\"background-color: #BDCDD6; display: flex\">\n" +
@@ -79,13 +82,13 @@ function handleCartResult(resultData) {
     }
 
     var minusButtons = document.getElementsByName("minus_button");
-    console.log("Number of minus buttons: " + minusButtons.length);
+    // console.log("Number of minus buttons: " + minusButtons.length);
 
     var plusButtons = document.getElementsByName("plus_button");
-    console.log("Number of plus buttons: " + plusButtons.length);
+    // console.log("Number of plus buttons: " + plusButtons.length);
 
     var removeButtons = document.getElementsByName("remove_button");
-    console.log("Number of remove buttons: " + removeButtons.length);
+    // console.log("Number of remove buttons: " + removeButtons.length);
 
     for (var i = 0; i < minusButtons.length; i++){
         minusButtons[i].addEventListener("click",minusButtonClicked);
@@ -94,46 +97,108 @@ function handleCartResult(resultData) {
     }
 
     let subtotalBody = jQuery("#total_amount");
-    subtotalBody.append(resultData["total"]);
+    subtotalBody.empty()
+    subtotalBody.append("$" + resultData["total"]);
 }
 
 // var minusButton = document.getElementById('minus_counter');
 // minusButton.addEventListener("click", minusButtonClicked);
-function minusButtonClicked(){
-    console.log("minus button clicked");
-    let currentItemNum = parseInt(document.getElementById("item_count").textContent);
-    console.log(currentItemNum);
+function minusButtonClicked(event){
 
-//     TODO: minus new item number
+    /*
+        make ajax request with info of which movie to remove
+        servlet updates session cart
+        js calls the populate table function
 
-    console.log("current item number minus one")
+     */
+    let title = "";
+    let row;
+    if(event.target.tagName === "BUTTON"){
+        row = event.target.parentNode.parentNode.parentNode.parentNode;
+    }
+    else{
+        row = event.target.parentNode.parentNode.parentNode.parentNode.parentNode;
+    }
+    // console.log(row);
+    let cells = row.getElementsByTagName("td");
+    title = cells[0].innerText;
+    console.log("Minus one of " + title);
+    jQuery.ajax({
+        method:"GET",
+        url:"api/modify-cart",
+        data:{
+            "modify" : "minus",
+            "title" : title
+        },
+        error: handleModifyError(),
+        success: () => populateTable()
+    });
 }
 
-// var plusButton = document.getElementById('plus_counter');
-// plusButton.addEventListener("click", plusButtonClicked);
-function plusButtonClicked(){
-    console.log("plus button clicked");
-    let currentItemNum = parseInt(document.getElementById("item_count").textContent);
-    console.log(currentItemNum);
-
-//     TODO: plus new item number
-
-    console.log("current item number plus one")
+function plusButtonClicked(event){
+    let title = "";
+    let row;
+    if(event.target.tagName === "BUTTON"){
+        row = event.target.parentNode.parentNode.parentNode.parentNode;
+    }
+    else{
+        row = event.target.parentNode.parentNode.parentNode.parentNode.parentNode;
+    }
+    // console.log(row);
+    let cells = row.getElementsByTagName("td");
+    title = cells[0].innerText;
+    console.log("Add one of " + title);
+    jQuery.ajax({
+        method:"GET",
+        url:"api/modify-cart",
+        data:{
+            "modify" : "add",
+            "title" : title
+        },
+        error: handleModifyError(),
+        success: () => populateTable()
+    });
 }
 
 // var removeButton = document.getElementById('remove_button');
 // removeButton.addEventListener("click", removeButtonClicked);
-function removeButtonClicked(){
-    console.log("remove button clicked");
-
-//     TODO: remove item from the list
+function removeButtonClicked(event){
+    let title = "";
+    let row;
+    if(event.target.tagName === "BUTTON"){
+        row = event.target.parentNode.parentNode.parentNode.parentNode;
+    }
+    else{
+        row = event.target.parentNode.parentNode.parentNode.parentNode.parentNode;
+    }
+    // console.log(row);
+    let cells = row.getElementsByTagName("td");
+    title = cells[0].innerText;
+    console.log("Remove " + title);
+    jQuery.ajax({
+        method:"GET",
+        url:"api/modify-cart",
+        data:{
+            "modify" : "remove",
+            "title" : title
+        },
+        error: handleModifyError(),
+        success: () => populateTable()
+    });
 }
 
+function handleModifyError(){
+
+}
+
+function populateTable(){
+    jQuery.ajax({
+        dataType:"json",
+        method: "GET",// Setting request method
+        url: "api/shopping-cart" ,
+        error: function(){console.log("Something went wrong")},
+        success: (resultData) => handleCartResult(resultData)
+    });
+}
 // populate the cart initially
-jQuery.ajax({
-    dataType:"json",
-    method: "GET",// Setting request method
-    url: "api/shopping-cart" ,
-    error: function(){console.log("Something went wrong")},
-    success: (resultData) => handleCartResult(resultData)
-})
+populateTable()

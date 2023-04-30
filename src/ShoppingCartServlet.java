@@ -40,8 +40,8 @@ public class ShoppingCartServlet extends HttpServlet{
      */
     protected void doGet(HttpServletRequest request, HttpServletResponse response) throws IOException {
 
-        System.out.println(request.getRequestURI() + request.getQueryString());
-        System.out.println("debug");
+//        System.out.println(request.getRequestURI() + request.getQueryString());
+//        System.out.println("debug");
 
         // Output stream to STDOUT
         PrintWriter out = response.getWriter();
@@ -52,10 +52,10 @@ public class ShoppingCartServlet extends HttpServlet{
 
             HttpSession session = request.getSession();
             ShoppingCart cart = (ShoppingCart) session.getAttribute("cart");
-            System.out.println(cart);
+//            System.out.println(cart);
             JsonObject shoppingCartJson = new JsonObject();
             /*
-                shoppingCartJson = {items:[[title, count, price],[title, count, price]], total: cart.getTotal}
+                shoppingCartJson = {items:[[title, count, price/unit, total],[title, count, price/unit, total]], total: cart.getTotal}
              */
             JsonArray itemsArray = new JsonArray();
             List<CartItem> items = cart.getItems();
@@ -63,7 +63,8 @@ public class ShoppingCartServlet extends HttpServlet{
                 JsonArray itemInfo = new JsonArray();
                 itemInfo.add(item.getItemName());
                 itemInfo.add(item.getQuantity());
-                itemInfo.add(item.getSubtotal());
+                itemInfo.add(item.getPrice());
+                itemInfo.add(Math.round(item.getSubtotal()*100.0)/100.0);
                 itemsArray.add(itemInfo);
             }
             shoppingCartJson.add("items",itemsArray);
