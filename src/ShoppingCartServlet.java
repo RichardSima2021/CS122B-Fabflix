@@ -74,7 +74,7 @@ public class ShoppingCartServlet extends HttpServlet{
             }
             shoppingCartJson.add("items",itemsArray);
             shoppingCartJson.addProperty("total", Math.round(cart.getTotal()*100.0)/100.0);
-            System.out.println(shoppingCartJson);
+//            System.out.println(shoppingCartJson);
 
             // Write JSON string to output
 //            out.write(genreJson.toString());

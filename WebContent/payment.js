@@ -18,16 +18,20 @@ function handlePaymentResult(resultData){
  * Handle the data returned by SubmitPaymentServlet
  * @param resultDataString jsonObject
  */
-function handleSubmitPaymentResult(resultDataString) {
-    // console.log(resultDataString);
-    let resultDataJson = JSON.parse(resultDataString);
+function handleSubmitPaymentResult(resultDataJson) {
+    console.log(resultDataJson);
+    // let resultDataJson = JSON.parse(resultDataString);
 
     console.log("handle submit payment response");
     console.log(resultDataJson);
-    console.log(resultDataJson["status"]);
+    // console.log(resultDataJson["status"]);
 
     // If login succeeds, it will redirect the user to movie-list.html
     if (resultDataJson["status"] === "success") {
+
+        let transactionListString = JSON.stringify(resultDataJson["transactionList"]);
+        // console.log(transactionListString);
+        localStorage.setItem("transactionListString",transactionListString);
         window.location.replace("confirm.html");
     } else {
         // If login fails, the web page will display
@@ -52,11 +56,13 @@ function submitPaymentForm(formSubmitEvent) {
     formSubmitEvent.preventDefault();
 
     $.ajax(
-        "api/submit-payment", {
+        "api/submit-payment",
+        {
+            dataType: "json",
             method: "POST",
             // Serialize the payment form to the data sent by POST request
             data: payment_form.serialize(),
-            success: handleSubmitPaymentResult
+            success: (resultData) => handleSubmitPaymentResult(resultData)
         }
     );
 }
@@ -72,6 +78,8 @@ function loadPayment(){
     });
 }
 
+// console.log("payment.js called from: ")
+// console.log(document.currentScript.getAttribute());
 loadPayment();
 console.log("page loaded");
 payment_form.submit(submitPaymentForm);

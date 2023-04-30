@@ -22,8 +22,29 @@
     <div class = "payment_container">
         <span class="payment_head">Congratulation!</span>
         <span style="color: #6096B4; font-weight: bold; font-size: 50px">Your Order Placed Successfully!</span>
+        <table id=transaction_table>
+            <thead class = "table-dark">
+            <tr>
+                <th>Sale ID</th>
+                <th>Title</th>
+                <th>Quantity</th>
+                <th>Price</th>
+                <th>Total</th>
+            </tr>
+
+            </thead>
+            <tbody id=transaction_table_body></tbody>
+        </table>
+        <div class="total">
+            <div class="subtotal">Subtotal: </div>
+            <div id= total_amount class="total_amount">$</div>
+        </div>
     </div>
 
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.9/umd/popper.min.js"></script>
+<script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js"></script>
 
+<script src="confirmation.js"></script>
 </body>
 </html>

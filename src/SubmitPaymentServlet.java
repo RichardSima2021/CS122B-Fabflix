@@ -1,3 +1,4 @@
+import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
 import jakarta.servlet.ServletConfig;
 import jakarta.servlet.annotation.WebServlet;
@@ -73,8 +74,10 @@ public class SubmitPaymentServlet extends HttpServlet {
                 // existing user and correct password
                 // This is the only place we refer to it as user vs email because this is stored to session
 //                    request.getSession().setAttribute("user", new User(email));
-                System.out.println("payment success");
+//                System.out.println("payment success");
+                JsonArray transactionArray = new JsonArray();
                 for(CartItem item : cart.getItems()){
+                    JsonObject transactionInfo = new JsonObject();
                     String movieTitle = item.getItemName();
                     int copies = item.getQuantity();
                     Statement getMovieIdStatement = conn.createStatement();
@@ -89,19 +92,34 @@ public class SubmitPaymentServlet extends HttpServlet {
 
                     Statement insertIntoSalesStatement = conn.createStatement();
                     String insertIntoSalesQuery = "INSERT INTO sales (customerId, movieId, saleDate, copies) VALUES (" + customerID + ", \"" + movieId + "\", \"" + checkoutDate + "\", " + copies + ")";
-                    System.out.println(insertIntoSalesQuery);
+//                    System.out.println(insertIntoSalesQuery);
                     insertIntoSalesStatement.executeUpdate(insertIntoSalesQuery);
                     insertIntoSalesStatement.close();
 
+                    Statement getSaleIDStatement = conn.createStatement();
+                    String getSaleIDQuery = "SELECT id FROM sales ORDER BY id DESC LIMIT 1";
+                    ResultSet saleIDResult = getSaleIDStatement.executeQuery(getSaleIDQuery);
+                    saleIDResult.next();
+                    int saleID = saleIDResult.getInt("id");
+
+                    transactionInfo.addProperty("id", saleID);
+                    transactionInfo.addProperty("count", copies);
+                    transactionInfo.addProperty("title", movieTitle);
+                    transactionInfo.addProperty("pricePerUnit",item.getPrice());
+                    transactionInfo.addProperty("movieId", movieId);
+                    transactionArray.add(transactionInfo);
+                    getSaleIDStatement.close();
+                    saleIDResult.close();
                 }
                 responseJsonObject.addProperty("status", "success");
                 responseJsonObject.addProperty("message", "success");
+                responseJsonObject.add("transactionList",transactionArray);
                 cart.clear();
 //                System.out.println("submit payment success");
             }
             getUserStatement.close();
             rs.close();
-
+//            System.out.println(responseJsonObject);
             // Write JSON string to output
 //            out.write(genreJson.toString());
             response.getWriter().write(responseJsonObject.toString());
