@@ -23,9 +23,21 @@
 <!--            gap: 10px;-->
 <!--        }-->
 <!--    </style>-->
-</head>
-<body>
 
+</head>
+
+<body>
+<div class = "browse_head">
+    <form id = "search_form" method = "GET">
+        <label>Search By</label>
+        <input id="searchTitle" placeholder="Title" type = "text">
+        <input id="searchYear" placeholder="Year" type = "number" min="2001">
+        <input id="searchDirector" placeholder="Director" type="text">
+        <input id="searchStar" placeholder="Star" type="text">
+        <input type="submit" value="Search">
+    </form>
+    <a href = movie-list.html><button type="button" class="btn btn-outline-secondary btn-sm" style="background-color: #BDCDD6"> Back To Movie List </button></a>
+</div>
 <!--button return to movie list-->
 <!--<ul class = "nav nav-pills">-->
 <!--    <li>-->
@@ -55,14 +67,15 @@
 <!--        <td><a href = "movie-list.html?title=D%">  D </a></td>-->
 <!--    </tr>-->
 <!--</table>-->
-<form id = "search_form" method = "GET">
-    <label>Search By</label>
-    <input id="searchTitle" placeholder="Title" type = "text">
-    <input id="searchYear" placeholder="Year" type = "number" min="2001">
-    <input id="searchDirector" placeholder="Director" type="text">
-    <input id="searchStar" placeholder="Star" type="text">
-    <input type="submit" value="Search">
-</form>
+
+<!--<form id = "search_form" method = "GET">-->
+<!--    <label>Search By</label>-->
+<!--    <input id="searchTitle" placeholder="Title" type = "text">-->
+<!--    <input id="searchYear" placeholder="Year" type = "number" min="2001">-->
+<!--    <input id="searchDirector" placeholder="Director" type="text">-->
+<!--    <input id="searchStar" placeholder="Star" type="text">-->
+<!--    <input type="submit" value="Search">-->
+<!--</form>-->
 
 <!-- Load jQuery and Bootstrap JS -->
 <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
