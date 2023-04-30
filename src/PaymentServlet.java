@@ -4,6 +4,7 @@ import jakarta.servlet.annotation.WebServlet;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+import jakarta.servlet.http.HttpSession;
 
 import javax.naming.InitialContext;
 import javax.naming.NamingException;
@@ -20,46 +21,35 @@ public class PaymentServlet extends HttpServlet {
     /**
      * @see HttpServlet#doGet(HttpServletRequest request, HttpServletResponse response)
      */
-    private DataSource dataSource;
+//    private DataSource dataSource;
+//
+//    public void init(ServletConfig config) {
+//        try {
+//            dataSource = (DataSource) new InitialContext().lookup("java:comp/env/jdbc/moviedb");
+//        } catch (NamingException e) {
+//            e.printStackTrace();
+//        }
+//    }
+    protected void doGet(HttpServletRequest request, HttpServletResponse response) throws IOException {
 
-    public void init(ServletConfig config) {
+        PrintWriter out = response.getWriter();
+
         try {
-            dataSource = (DataSource) new InitialContext().lookup("java:comp/env/jdbc/moviedb");
-        } catch (NamingException e) {
-            e.printStackTrace();
-        }
-    }
-    protected void doPost(HttpServletRequest request, HttpServletResponse response) throws IOException {
-        String firstName = request.getParameter("first_name");
-        String lastName = request.getParameter("last_name");
-        String cardNumber = request.getParameter("card_number");
-        String expiration = request.getParameter("expiration");
+            JsonObject responseJsonObject = new JsonObject();
+
+            HttpSession session = request.getSession();
+            ShoppingCart cart = (ShoppingCart) session.getAttribute("cart");
+            System.out.println(cart);
+            responseJsonObject.addProperty("total", Math.round(cart.getTotal()*100.0)/100.0);
+            System.out.println(responseJsonObject);
 
 
 
-
-        JsonObject responseJsonObject = new JsonObject();
-
-        try (Connection conn = dataSource.getConnection()) {
-            Statement getUserStatement = conn.createStatement();
-
-//            select * from creditcards where id = 960 and firstNmae = "t" and lastName = "t" and expiration = DATE("2005-11-20");
-            String query = "SELECT * FROM creditcards WHERE firstName = \"" + firstName + "\" and lastName = \"" + lastName + "\" and id = \"" + cardNumber + "\" and expiration = DATE(\"" + expiration + "\")";
-            ResultSet rs = getUserStatement.executeQuery(query);
-            if(rs.next() == false){
-                // no such user
-                responseJsonObject.addProperty("status", "fail");
-                request.getServletContext().log("Login failed");
-                responseJsonObject.addProperty("message", "Incorrect Payment Information");
-            }
-            else{
-                // existing user and correct password
-                // This is the only place we refer to it as user vs email because this is stored to session
-//                    request.getSession().setAttribute("user", new User(email));
-                responseJsonObject.addProperty("status", "success");
-                responseJsonObject.addProperty("message", "success");
-            }
-
+            // Write JSON string to output
+//            out.write(genreJson.toString());
+            out.write(responseJsonObject.toString());
+            // Set response status to 200 (OK)
+            response.setStatus(200);
 
         }catch (Exception e) {
 
@@ -67,11 +57,13 @@ public class PaymentServlet extends HttpServlet {
             JsonObject jsonObject = new JsonObject();
             jsonObject.addProperty("errorMessage", e.getMessage());
             System.out.println(jsonObject);
-            response.getWriter().write(responseJsonObject.toString());
+            out.write(jsonObject.toString());
 
             // Set response status to 500 (Internal Server Error)
             response.setStatus(500);
         }
-        response.getWriter().write(responseJsonObject.toString());
+        finally {
+            out.close();
+        }
     }
 }

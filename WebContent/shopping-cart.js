@@ -192,6 +192,7 @@ function handleModifyError(){
 }
 
 function populateTable(){
+    console.log("load shopping cart");
     jQuery.ajax({
         dataType:"json",
         method: "GET",// Setting request method

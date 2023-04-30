@@ -51,16 +51,23 @@
                 <div class="payment_totalcheckout">
                     <div class="payment_total">
                         <div class="payment_subtotal">Sub-Total: </div>
-                        <div id= total_amount class="payment_total_amount">$6.34</div>
+<!--                        Add total here-->
+                        <div id= "payment_total_amount" class="payment_total_amount"></div>
                     </div>
-                    <a href = #><button type="button" class="btn btn-outline-light btn-lg" style="background-color: #205295"> Place Order </button></a>
+                    <button type="submit" class="btn btn-outline-light btn-lg" style="background-color: #205295"> Place Order </button>
+                    <div id = "payment_error_message"></div>
                 </div>
             </form>
-            <div id = "payment_error_message"></div>
+
         </div>
 
 
     </div>
 
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.9/umd/popper.min.js"></script>
+<script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js"></script>
+
+<script src="payment.js"></script>
 </body>
 </html>
