@@ -60,6 +60,8 @@ public class SingleMovieServlet extends HttpServlet {
 //                    "WHERE m.id = sim.movieId and sim.starId = s.id and s.id = ?";
             String getMovieQuery = "SELECT * FROM movies WHERE id = ?";
 
+            JsonArray jsonArray = new JsonArray();
+
 
             // Declare our statement
             PreparedStatement statement = conn.prepareStatement(getMovieQuery);
@@ -71,10 +73,12 @@ public class SingleMovieServlet extends HttpServlet {
             // Perform the query
             ResultSet movieInfo = statement.executeQuery();
             movieInfo.next();
+
             JsonObject jsonObject = new JsonObject();
             String title = movieInfo.getString("title");
             int year = movieInfo.getInt("year");
             String director = movieInfo.getString("director");
+            String movieId = movieInfo.getString("id");
             jsonObject.addProperty("title",title);
             jsonObject.addProperty("year", year);
             jsonObject.addProperty("director",director);
@@ -102,23 +106,36 @@ public class SingleMovieServlet extends HttpServlet {
             getRatingStatement.close();
             ratingResult.close();
 
-            String getGenresQuery = "SELECT * FROM genres_in_movies gim, genres g WHERE g.id = gim.genreId AND gim.movieId = \"" + id + "\"";
+            JsonObject genresNames = new JsonObject();
+            JsonObject genresIDs = new JsonObject();
+            JsonArray genreNamesArray = new JsonArray();
+            JsonArray genreIDsArray = new JsonArray();
+
+            String getGenresQuery = "SELECT g.id, g.name FROM genres_in_movies gim, genres g, movies m WHERE " +
+                    "gim.genreId = g.id AND m.id = \"" + movieId + "\" AND gim.movieId = m.id ORDER BY g.name ASC";
             Statement getGenresStatement = conn.createStatement();
             ResultSet genresResult = getGenresStatement.executeQuery(getGenresQuery);
-            String genres = "";
 
             while(genresResult.next()){
-                genres += genresResult.getString("name");
-                genres += ", ";
+                String currentGenreName = genresResult.getString("name");
+                String currentGenreId = genresResult.getString("id");
+                genreNamesArray.add(currentGenreName);
+                genreIDsArray.add(currentGenreId);
             }
-            genres = genres.substring(0,genres.length()-2);
+            getGenresStatement.close();
+            genresResult.close();
 
 
-            jsonObject.addProperty("genres", genres);
+
+//            jsonObject.addProperty("genres", genres);
 
 
-            JsonArray jsonArray = new JsonArray();
             jsonArray.add(jsonObject);
+
+            genresNames.add("genres_names",genreNamesArray);
+            jsonArray.add(genresNames);
+            genresIDs.add("genres_ids",genreIDsArray);
+            jsonArray.add(genresIDs);
             /*
             [
                 {"title": xxxx, "director": xxxx, "rating": xxxx}, | resultData[0]
@@ -132,7 +149,14 @@ public class SingleMovieServlet extends HttpServlet {
             JsonArray starNamesArray = new JsonArray();
             JsonArray starIDsArray = new JsonArray();
 
-            String getStarsQuery = "SELECT * FROM stars s, stars_in_movies sim WHERE sim.starId = s.id AND sim.movieId = \"" + id + "\"";
+//            String getStarsQuery = "SELECT * FROM stars s, stars_in_movies sim WHERE sim.starId = s.id AND sim.movieId = \"" + id + "\"";
+            String getStarsQuery = "WITH stars_in_this_movie AS (" +
+                    "SELECT s1.id, s1.name FROM stars s1, stars_in_movies sim1 " +
+                    "WHERE sim1.movieId = \"" + movieId + "\" AND sim1.starId = s1.Id) " +
+                    "SELECT s.name, s.id, COUNT(m.id) as movieCount " +
+                    "FROM stars_in_this_movie s, movies m, stars_in_movies sim "+
+                    "WHERE sim.starId = s.id AND sim.movieId = m.id " +
+                    "GROUP BY s.name, s.id ORDER BY movieCount DESC, name ASC";
             Statement getStarsStatement = conn.createStatement();
             ResultSet starsResult = getStarsStatement.executeQuery(getStarsQuery);
             while(starsResult.next()){
@@ -157,9 +181,10 @@ public class SingleMovieServlet extends HttpServlet {
             getGenresStatement.close();
             genresResult.close();
 
-
+            System.out.println(jsonArray.toString());
             // Write JSON string to output
             out.write(jsonArray.toString());
+
             // Set response status to 200 (OK)
             response.setStatus(200);
 
