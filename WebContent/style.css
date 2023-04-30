@@ -194,3 +194,8 @@ th {
     background-color: #6096B4;
     color: aliceblue;
 }
+.SS_head{
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+}
