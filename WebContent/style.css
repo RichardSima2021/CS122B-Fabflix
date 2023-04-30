@@ -145,3 +145,52 @@ th {
     display: flex;
     flex-direction: row;
 }
+
+.payment_head{
+    color: #205295;
+    font-weight: bold;
+    font-size: 70px;
+;
+}
+.payment_body{
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+.payment_container{
+    width: 70%;
+    height: 85%;
+    background-color: #BDCDD6;
+    border-radius: 20px;
+    box-shadow: 0px 25px 40px #BDCDD6;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+}
+.payment_info {
+    width: 65%;
+
+}
+
+.payment_total{
+    color: #205295;
+    display: flex;
+    flex-direction: row;
+    font-size: 30px;
+}
+
+.payment_totalcheckout{
+    width: 50%;
+    display: flex;
+    align-items: center;
+    flex-direction: column;
+}
+
+.form-control{
+    background-color: aliceblue;
+}
+.input-group-text{
+    background-color: #6096B4;
+    color: aliceblue;
+}

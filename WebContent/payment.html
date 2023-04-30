@@ -2,9 +2,53 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
+    <meta name="viewport"
+          content="width=device-width, initial-scale=1, shrink-to-fit=no">
+
+    <!-- Bootstrap CSS -->
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css"
+          integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous">
+
+    <!-- adding CSS -->
+    <link rel="stylesheet" href ="./style.css" >
+
     <title>Payment</title>
 </head>
-<body>
+<body class = "body payment_body">
+
+    <div class = "payment_container">
+        <svg xmlns="http://www.w3.org/2000/svg" width="70" height="70" fill="#205295" class="bi bi-camera-reels" viewBox="0 0 16 16">
+            <path d="M6 3a3 3 0 1 1-6 0 3 3 0 0 1 6 0zM1 3a2 2 0 1 0 4 0 2 2 0 0 0-4 0z"/>
+            <path d="M9 6h.5a2 2 0 0 1 1.983 1.738l3.11-1.382A1 1 0 0 1 16 7.269v7.462a1 1 0 0 1-1.406.913l-3.111-1.382A2 2 0 0 1 9.5 16H2a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h7zm6 8.73V7.27l-3.5 1.555v4.35l3.5 1.556zM1 8v6a1 1 0 0 0 1 1h7.5a1 1 0 0 0 1-1V8a1 1 0 0 0-1-1H2a1 1 0 0 0-1 1z"/>
+            <path d="M9 6a3 3 0 1 0 0-6 3 3 0 0 0 0 6zM7 3a2 2 0 1 1 4 0 2 2 0 0 1-4 0z"/>
+        </svg>
+        <span class = "payment_head">Fablix</span>
+
+        <div class = "payment_info">
+            <div class = "name_input" style="display: grid; grid-row-gap: 3px">
+                <div class="input-group flex-nowrap first_name">
+                    <span class="input-group-text" style="width:30%; display: flex; justify-content: center;">First Name</span>
+                    <input type = "text" aria-label="First name" class="form-control">
+                </div>
+                <div class="input-group flex-nowrap last_name">
+                    <span class="input-group-text" style="width:30%;display: flex;justify-content: center;">Last Name</span>
+                    <input type = "text" aria-label="Last name" class="form-control">
+                </div>
+                <div class="input-group flex-nowrap card_number">
+                    <span class="input-group-text" style="width:30%; display: flex; justify-content: center;">Card Number</span>
+                    <input type = "text" aria-label="card number" class="form-control">
+                </div>
+
+            </div>
+        </div>
+        <div class="payment_totalcheckout">
+            <div class="payment_total">
+                <div class="payment_subtotal">Sub-Total: </div>
+                <div id= total_amount class="payment_total_amount">$6.34</div>
+            </div>
+            <a href = #><button type="button" class="btn btn-outline-light btn-md" style="background-color: #205295"> Proceed to Checkout </button></a>
+        </div>
+    </div>
 
 </body>
 </html>
