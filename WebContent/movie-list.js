@@ -165,7 +165,7 @@ function prevPageClicked(){
 var nextButton = document.getElementById("nextButton");
 nextButton.addEventListener("click",nextPageClicked);
 function noNext(){
-
+    window.alert("No next page");
 }
 function nextPageClicked(){
     console.log("next button clicked");
