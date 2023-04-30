@@ -32,7 +32,7 @@ public class LoginServlet extends HttpServlet {
     protected void doPost(HttpServletRequest request, HttpServletResponse response) throws IOException {
         String email = request.getParameter("email");
         String password = request.getParameter("password");
-
+        int id;
 
 
 
@@ -41,7 +41,7 @@ public class LoginServlet extends HttpServlet {
         try (Connection conn = dataSource.getConnection()) {
             Statement getUserStatement = conn.createStatement();
 
-            String query = "SELECT password FROM customers WHERE email = \"" + email + "\"";
+            String query = "SELECT password, id FROM customers WHERE email = \"" + email + "\"";
             ResultSet rs = getUserStatement.executeQuery(query);
             if(rs.next() == false){
                 // no such user
@@ -60,7 +60,9 @@ public class LoginServlet extends HttpServlet {
                 else{
                     // existing user and correct password
                     // This is the only place we refer to it as user vs email because this is stored to session
-                    request.getSession().setAttribute("user", new User(email));
+                    id = rs.getInt("id");
+//                    System.out.println("User id = " + )
+                    request.getSession().setAttribute("user", new User(email, id));
                     responseJsonObject.addProperty("status", "success");
                     responseJsonObject.addProperty("message", "success");
                 }
