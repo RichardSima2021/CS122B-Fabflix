@@ -73,12 +73,30 @@ function handleResult(resultData) {
 
     rowHTML += "</td>";
 
-    // rowHTML += "<td>" + resultData[i]["genres"] + "</td>";
-    // rowHTML += "<td>" + resultData[i]["stars"] + "</td>";
+    rowHTML += "<td>" +"<button name=\"cart_plus\" type=\"button\" class=\"btn btn-outline-secondary btn-sm cart_plus\" style=\"background-color: #BDCDD6\"> <svg xmlns=\"http://www.w3.org/2000/svg\" width=\"16\" height=\"16\" fill=\"currentColor\" class=\"bi bi-cart-plus\" viewBox=\"0 0 16 16\">\n" +
+        "  <path name =\"plusSymbol\" d=\"M9 5.5a.5.5 0 0 0-1 0V7H6.5a.5.5 0 0 0 0 1H8v1.5a.5.5 0 0 0 1 0V8h1.5a.5.5 0 0 0 0-1H9V5.5z\"/>\n" +
+        "  <path name=\"cartSymbol\" d=\"M.5 1a.5.5 0 0 0 0 1h1.11l.401 1.607 1.498 7.985A.5.5 0 0 0 4 12h1a2 2 0 1 0 0 4 2 2 0 0 0 0-4h7a2 2 0 1 0 0 4 2 2 0 0 0 0-4h1a.5.5 0 0 0 .491-.408l1.5-8A.5.5 0 0 0 14.5 3H2.89l-.405-1.621A.5.5 0 0 0 2 1H.5zm3.915 10L3.102 4h10.796l-1.313 7h-8.17zM6 14a1 1 0 1 1-2 0 1 1 0 0 1 2 0zm7 0a1 1 0 1 1-2 0 1 1 0 0 1 2 0z\"/>\n" +
+        "</svg> </button>\n" + "</td>";
     rowHTML += "</tr>";
 
-        // Append the row created to the table body, which will refresh the page
-        movieTableBodyElement.append(rowHTML);
+    // rowHTML += "<td>" + resultData[i]["genres"] + "</td>";
+    // rowHTML += "<td>" + resultData[i]["stars"] + "</td>";
+    // rowHTML += "</tr>";
+
+
+    //     // Append the row created to the table body, which will refresh the page
+    movieTableBodyElement.append(rowHTML);
+
+    var AddToCartButton = document.getElementsByName("cart_plus")[0];
+    // console.log("Number of cart plus buttons: " + AddToCartButton.length);
+    AddToCartButton.addEventListener("click",AddToCartButtonClicked);
+
+    if(resultData[0]["rating"] === "N/A"){
+        moviePrice = 0;
+    }
+    else{
+        moviePrice = parseFloat(resultData[0]["rating"])*2;
+    }
 }
 
 /**
@@ -87,6 +105,44 @@ function handleResult(resultData) {
 
 // Get id from URL
 let movieId = getParameterByName('id');
+let moviePrice;
+
+function AddToCartButtonClicked(event){
+    console.log("cart_plus button clicked");
+    let row;
+    if (event.target.tagName === "BUTTON") {
+        row = event.target.parentNode.parentNode;
+    }
+    else if(event.target.tagName === "svg") {
+        row = event.target.parentNode.parentNode.parentNode;
+    }
+    else{
+        row = event.target.parentNode.parentNode.parentNode.parentNode;
+    }
+
+    // let row = event.target.parentNode.parentNode;
+    let cells = row.getElementsByTagName("td");
+    console.log(row);
+    console.log(cells);
+
+    let title = cells[0].innerText;
+    // let price = parseFloat(cells[5].innerText.slice(1));
+    console.log(title + " costs " + moviePrice);
+    // console.log(price);
+
+    jQuery.ajax(
+        {
+            method: "GET",
+            url: "api/add-to-cart",
+            data: {
+                "title": title,
+                "price": moviePrice
+            },
+            error: function(){window.alert("add to cart failed"); console.log("Add to cart failure")},
+            success: function(){window.alert("add to cart success")}
+        }
+    );
+}
 
 // Makes the HTTP GET request and registers on success callback function handleResult
 jQuery.ajax({

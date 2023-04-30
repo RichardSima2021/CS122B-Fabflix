@@ -95,7 +95,7 @@ function handleMovieResult(resultData) {
     var AddToCartButtons = document.getElementsByName("cart_plus");
     console.log("Number of cart plus buttons: " + AddToCartButtons.length);
     for (var i = 0; i < AddToCartButtons.length; i++){
-        AddToCartButtons[i].addEventListener("click",AddToCartButtonsClicked)
+        AddToCartButtons[i].addEventListener("click",AddToCartButtonsClicked);
     }
 }
 
