@@ -38,7 +38,10 @@ public class LoginFilter implements Filter {
 //            System.out.println("Redirecting to login.html");
 
 //            if(httpRequest.)
-            httpResponse.sendRedirect("login.html");
+//            System.out.println(((HttpServletRequest) request).getRequestURI());
+//            System.out.println(((HttpServletRequest) request).getPathInfo());
+//            System.out.println(((HttpServletRequest) request).getContextPath());
+            httpResponse.sendRedirect(((HttpServletRequest) request).getContextPath()+"/login.html");
 //            chain.doFilter(request, response);
         } else {
             chain.doFilter(request, response);
