@@ -5,7 +5,17 @@ public class ShoppingCart {
     private List<CartItem> items;
 
     public ShoppingCart() {
-        items = new ArrayList<CartItem>();
+        items = new ArrayList<>();
+    }
+
+    @Override
+    public String toString() {
+        String res = "Cart Items:\n";
+        for(CartItem item : items){
+            res += item.toString() + "\n";
+        }
+        res += "__________________________";
+        return res;
     }
 
     public void addItem(String itemName, int quantity, double price) {

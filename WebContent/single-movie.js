@@ -55,10 +55,10 @@ function handleResult(resultData) {
 
     for(var i = 0; i < resultData[1]["genres_names"].length-1; i++){
         rowHTML +=  "<a href =" +
-            "movie-list.html?genre=" + resultData[2]['genres_ids'][i] + ">" + resultData[1]['genres_names'][i] + "</a>" + ", ";
+            "movie-list.html?genre=" + resultData[1]['genres_names'][i] + ">" + resultData[1]['genres_names'][i] + "</a>" + ", ";
     }
     rowHTML +=  "<a href =" +
-        "movie-list.html?genre=" + resultData[2]['genres_ids'][resultData[2]['genres_ids'].length-1] + ">" + resultData[1]['genres_names'][resultData[1]['genres_names'].length-1] + "</a>";
+        "movie-list.html?genre=" + resultData[1]['genres_names'][resultData[1]['genres_names'].length-1] + ">" + resultData[1]['genres_names'][resultData[1]['genres_names'].length-1] + "</a>";
 
     rowHTML += "</td>";
 

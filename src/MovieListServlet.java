@@ -41,7 +41,7 @@ public class MovieListServlet extends HttpServlet {
      */
     protected void doGet(HttpServletRequest request, HttpServletResponse response) throws IOException {
         response.setContentType("application/json"); // Response mime type
-        System.out.println(request.getQueryString());
+//        System.out.println(request.getQueryString());
         // Don't use session to directly store query, use session to reconstruct query
 
         /*

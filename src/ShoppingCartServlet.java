@@ -9,6 +9,8 @@ import jakarta.servlet.annotation.WebServlet;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+import jakarta.servlet.http.HttpSession;
+
 import javax.sql.DataSource;
 import java.io.IOException;
 import java.io.PrintWriter;
@@ -16,20 +18,21 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.Statement;
 import java.sql.ResultSet;
+import java.util.List;
 
 @WebServlet(name = "ShoppingCartServlet", urlPatterns = "/api/shopping-cart")
 public class ShoppingCartServlet extends HttpServlet{
 
     // Create a dataSource which registered in web.xml
-    private DataSource dataSource;
-
-    public void init(ServletConfig config) {
-        try {
-            dataSource = (DataSource) new InitialContext().lookup("java:comp/env/jdbc/moviedb");
-        } catch (NamingException e) {
-            e.printStackTrace();
-        }
-    }
+//    private DataSource dataSource;
+//
+//    public void init(ServletConfig config) {
+//        try {
+//            dataSource = (DataSource) new InitialContext().lookup("java:comp/env/jdbc/moviedb");
+//        } catch (NamingException e) {
+//            e.printStackTrace();
+//        }
+//    }
 
     /**
      * @see HttpServlet#doGet(HttpServletRequest request, HttpServletResponse
@@ -37,28 +40,39 @@ public class ShoppingCartServlet extends HttpServlet{
      */
     protected void doGet(HttpServletRequest request, HttpServletResponse response) throws IOException {
 
-        response.setContentType("application/json"); // Response mime type
-
-        // Retrieve parameter id from url request.
-        String id = request.getParameter("id");
-
-        // The log message can be found in localhost log
-        request.getServletContext().log("getting id: " + id);
+        System.out.println(request.getRequestURI() + request.getQueryString());
+        System.out.println("debug");
 
         // Output stream to STDOUT
         PrintWriter out = response.getWriter();
 
         // Get a connection from dataSource and let resource manager close the connection after usage.
-        try (Connection conn = dataSource.getConnection()) {
+        try{
             // Get a connection from dataSource
 
-            JsonObject genreJson = new JsonObject();
-
-
-
+            HttpSession session = request.getSession();
+            ShoppingCart cart = (ShoppingCart) session.getAttribute("cart");
+            System.out.println(cart);
+            JsonObject shoppingCartJson = new JsonObject();
+            /*
+                shoppingCartJson = {items:[[title, count, price],[title, count, price]], total: cart.getTotal}
+             */
+            JsonArray itemsArray = new JsonArray();
+            List<CartItem> items = cart.getItems();
+            for(CartItem item : items){
+                JsonArray itemInfo = new JsonArray();
+                itemInfo.add(item.getItemName());
+                itemInfo.add(item.getQuantity());
+                itemInfo.add(item.getSubtotal());
+                itemsArray.add(itemInfo);
+            }
+            shoppingCartJson.add("items",itemsArray);
+            shoppingCartJson.addProperty("total", Math.round(cart.getTotal()*100.0)/100.0);
+            System.out.println(shoppingCartJson);
 
             // Write JSON string to output
-            out.write(genreJson.toString());
+//            out.write(genreJson.toString());
+            out.write(shoppingCartJson.toString());
             // Set response status to 200 (OK)
             response.setStatus(200);
 

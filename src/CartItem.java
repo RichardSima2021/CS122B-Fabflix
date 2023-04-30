@@ -36,4 +36,10 @@ public class CartItem {
     public double getSubtotal() {
         return quantity * price;
     }
+
+    @Override
+    public String toString() {
+        String res = itemName + " *" + quantity + " | " + "price ea. | " + getSubtotal();
+        return res;
+    }
 }
