@@ -59,13 +59,13 @@ public class SubmitPaymentServlet extends HttpServlet {
             ResultSet rs = getUserStatement.executeQuery(query);
 //            System.out.println(rs);
             if(cart.isEmpty()){
-                System.out.println("Cart is empty");
+//                System.out.println("Cart is empty");
                 responseJsonObject.addProperty("status","fail");
                 responseJsonObject.addProperty("message", "Cart is empty");
             }
             else if(rs.next() == false){
                 // no such user
-                System.out.println("payment failed");
+//                System.out.println("payment failed");
                 responseJsonObject.addProperty("status", "fail");
                 request.getServletContext().log("Payment failed");
                 responseJsonObject.addProperty("message", "Incorrect Payment Information");
