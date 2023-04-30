@@ -25,29 +25,41 @@
         <span class = "payment_head">Fablix</span>
 
         <div class = "payment_info">
-            <div class = "name_input" style="display: grid; grid-row-gap: 3px">
-                <div class="input-group flex-nowrap first_name">
-                    <span class="input-group-text" style="width:30%; display: flex; justify-content: center;">First Name</span>
-                    <input type = "text" aria-label="First name" class="form-control">
+            <form id = "payment_form" method = "post" action = "#">
+                <div class = "name_input" style="display: grid; grid-row-gap: 3px">
+                    <div class="input-group flex-nowrap first_name">
+                        <span class="input-group-text" style="width:30%; display: flex; justify-content: center;">First Name</span>
+                        <input type = "text" aria-label="First name" class="form-control" id = "cc-given-name" name = "first_name">
+                    </div>
+                    <div class="input-group flex-nowrap last_name">
+                        <span class="input-group-text" style="width:30%;display: flex;justify-content: center;">Last Name</span>
+                        <input type = "text" aria-label="Last name" class="form-control" id = "cc-family-name" name = "last_name">
+                    </div>
+                    <div class="input-group flex-nowrap card_number">
+                        <span class="input-group-text" style="width:30%; display: flex; justify-content: center;">Card Number</span>
+                        <input type = "text" aria-label="card number" class="form-control" id = "cc-number" name="card_number">
+                        <div class="invalid-feedback">Credit card number is required</div>
+                    </div>
+                    <div class="input-group flex-nowrap">
+                        <span class="input-group-text" style="width:30%; display: flex; justify-content: center;">Expiration Date</span>
+                        <input type="text" class="form-control" id="cc-expiration" placeholder="YYYY-MM-DD" required="" name = "expiration">
+                        <div class="invalid-feedback">
+                            Expiration date required
+                        </div>
+                    </div>
                 </div>
-                <div class="input-group flex-nowrap last_name">
-                    <span class="input-group-text" style="width:30%;display: flex;justify-content: center;">Last Name</span>
-                    <input type = "text" aria-label="Last name" class="form-control">
+                <div class="payment_totalcheckout">
+                    <div class="payment_total">
+                        <div class="payment_subtotal">Sub-Total: </div>
+                        <div id= total_amount class="payment_total_amount">$6.34</div>
+                    </div>
+                    <a href = #><button type="button" class="btn btn-outline-light btn-lg" style="background-color: #205295"> Place Order </button></a>
                 </div>
-                <div class="input-group flex-nowrap card_number">
-                    <span class="input-group-text" style="width:30%; display: flex; justify-content: center;">Card Number</span>
-                    <input type = "text" aria-label="card number" class="form-control">
-                </div>
+            </form>
+            <div id = "payment_error_message"></div>
+        </div>
 
-            </div>
-        </div>
-        <div class="payment_totalcheckout">
-            <div class="payment_total">
-                <div class="payment_subtotal">Sub-Total: </div>
-                <div id= total_amount class="payment_total_amount">$6.34</div>
-            </div>
-            <a href = #><button type="button" class="btn btn-outline-light btn-md" style="background-color: #205295"> Proceed to Checkout </button></a>
-        </div>
+
     </div>
 
 </body>
