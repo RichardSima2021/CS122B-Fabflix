@@ -15,6 +15,7 @@ import java.sql.Connection;
 import java.sql.ResultSet;
 import java.sql.Statement;
 import java.io.IOException;
+import java.time.LocalDate;
 
 @WebServlet(name = "SubmitPaymentServlet", urlPatterns = "/api/submit-payment")
 public class SubmitPaymentServlet extends HttpServlet {
@@ -42,7 +43,8 @@ public class SubmitPaymentServlet extends HttpServlet {
             cart = new ShoppingCart();
             session.setAttribute("cart", cart);
         }
-
+        User currentUser = (User) session.getAttribute("user");
+        int customerID = currentUser.getId();
 
 
         JsonObject responseJsonObject = new JsonObject();
@@ -55,7 +57,12 @@ public class SubmitPaymentServlet extends HttpServlet {
             String query = "SELECT * FROM creditcards WHERE firstName = \"" + firstName + "\" and lastName = \"" + lastName + "\" and id = \"" + cardNumber + "\" and expiration = DATE(\"" + expiration + "\")";
             ResultSet rs = getUserStatement.executeQuery(query);
 //            System.out.println(rs);
-            if(rs.next() == false){
+            if(cart.isEmpty()){
+                System.out.println("Cart is empty");
+                responseJsonObject.addProperty("status","fail");
+                responseJsonObject.addProperty("message", "Cart is empty");
+            }
+            else if(rs.next() == false){
                 // no such user
                 System.out.println("payment failed");
                 responseJsonObject.addProperty("status", "fail");
@@ -67,11 +74,33 @@ public class SubmitPaymentServlet extends HttpServlet {
                 // This is the only place we refer to it as user vs email because this is stored to session
 //                    request.getSession().setAttribute("user", new User(email));
                 System.out.println("payment success");
+                for(CartItem item : cart.getItems()){
+                    String movieTitle = item.getItemName();
+                    int copies = item.getQuantity();
+                    Statement getMovieIdStatement = conn.createStatement();
+                    String getMovieIdQuery = "SELECT id FROM movies WHERE title = \"" + movieTitle + "\"";
+                    ResultSet movieIdResult = getMovieIdStatement.executeQuery(getMovieIdQuery);
+                    movieIdResult.next();
+                    String movieId = movieIdResult.getString("id");
+                    LocalDate checkoutDate = LocalDate.now();
+//                    System.out.println("Checked out " + copies + " copies of " + movieTitle + " with movie Id " + movieId + " by " + customerID + " on " + checkoutDate);
+                    getMovieIdStatement.close();
+                    movieIdResult.close();
+
+                    Statement insertIntoSalesStatement = conn.createStatement();
+                    String insertIntoSalesQuery = "INSERT INTO sales (customerId, movieId, saleDate, copies) VALUES (" + customerID + ", \"" + movieId + "\", \"" + checkoutDate + "\", " + copies + ")";
+                    System.out.println(insertIntoSalesQuery);
+                    insertIntoSalesStatement.executeUpdate(insertIntoSalesQuery);
+                    insertIntoSalesStatement.close();
+
+                }
                 responseJsonObject.addProperty("status", "success");
                 responseJsonObject.addProperty("message", "success");
                 cart.clear();
-                System.out.println("submit payment success");
+//                System.out.println("submit payment success");
             }
+            getUserStatement.close();
+            rs.close();
 
             // Write JSON string to output
 //            out.write(genreJson.toString());

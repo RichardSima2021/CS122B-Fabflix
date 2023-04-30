@@ -4,10 +4,20 @@
  */
 public class User {
 
-    private final String username;
+    private String username;
+    private int id;
 
-    public User(String username) {
+    public User(String username, int id) {
         this.username = username;
+        this.id = id;
+    }
+
+    public String getUsername(){
+        return username;
+    }
+
+    public int getId(){
+        return id;
     }
 
 }
