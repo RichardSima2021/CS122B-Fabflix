@@ -1,13 +1,28 @@
 let payment_form = $("#payment_form");
+console.log("called payment.js");
+/**
+ * Handle the data returned by PaymentServlet
+ * @param resultData jsonObject
+ */
+function handlePaymentResult(resultData){
+    console.log("handle payment response");
+
+    let totalElement = jQuery("#payment_total_amount");
+
+    let rowHTML = "$ " + resultData["total"];
+
+    totalElement.append(rowHTML);
+}
 
 /**
- * Handle the data returned by LoginServlet
+ * Handle the data returned by SubmitPaymentServlet
  * @param resultDataString jsonObject
  */
-function handlePaymentResult(resultDataString) {
+function handleSubmitPaymentResult(resultDataString) {
+    // console.log(resultDataString);
     let resultDataJson = JSON.parse(resultDataString);
 
-    console.log("handle login response");
+    console.log("handle submit payment response");
     console.log(resultDataJson);
     console.log(resultDataJson["status"]);
 
@@ -28,7 +43,7 @@ function handlePaymentResult(resultDataString) {
  * @param formSubmitEvent
  */
 function submitPaymentForm(formSubmitEvent) {
-    console.log("submit login form");
+    console.log("submit payment form");
     /**
      * When users click the submit button, the browser will not direct
      * users to the url defined in HTML form. Instead, it will call this
@@ -37,13 +52,26 @@ function submitPaymentForm(formSubmitEvent) {
     formSubmitEvent.preventDefault();
 
     $.ajax(
-        "api/payment", {
+        "api/submit-payment", {
             method: "POST",
-            // Serialize the login form to the data sent by POST request
+            // Serialize the payment form to the data sent by POST request
             data: payment_form.serialize(),
-            success: handlePaymentResult
+            success: handleSubmitPaymentResult
         }
     );
 }
 
-payment_form.submit(submitPaymentForm());
+function loadPayment(){
+    console.log("load payment");
+    jQuery.ajax({
+        dataType: "json",
+        method: "GET",
+        url: "api/payment",
+        error: function(){console.log("Something went wrong")},
+        success: (resultData) => handlePaymentResult(resultData)
+    });
+}
+
+loadPayment();
+console.log("page loaded");
+payment_form.submit(submitPaymentForm);
