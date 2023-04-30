@@ -52,6 +52,10 @@ public class ShoppingCartServlet extends HttpServlet{
 
             HttpSession session = request.getSession();
             ShoppingCart cart = (ShoppingCart) session.getAttribute("cart");
+            if (cart == null){
+                cart = new ShoppingCart();
+                session.setAttribute("cart", cart);
+            }
 //            System.out.println(cart);
             JsonObject shoppingCartJson = new JsonObject();
             /*
@@ -59,6 +63,7 @@ public class ShoppingCartServlet extends HttpServlet{
              */
             JsonArray itemsArray = new JsonArray();
             List<CartItem> items = cart.getItems();
+
             for(CartItem item : items){
                 JsonArray itemInfo = new JsonArray();
                 itemInfo.add(item.getItemName());
