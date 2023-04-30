@@ -31,7 +31,7 @@ function loadConfirmationPage(){
     }
 
     let totalAmountElement = jQuery("#total_amount");
-    totalAmountElement.append(subtotal);
+    totalAmountElement.append(Math.round(subtotal*100.0)/100.0);
 
 }
 
