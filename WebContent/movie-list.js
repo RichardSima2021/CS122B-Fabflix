@@ -221,24 +221,40 @@ function submitSearchForm(formSubmitEvent) {
 
 function AddToCartButtonsClicked(event){
     console.log("cart_plus button clicked");
-    let row = event.target.parentNode.parentNode;
-    let cells = row.getElementsByTagName("td");
-    let title = cells[0].innerText;
-    let price = parseFloat(cells[5].innerText);
+    // if(event.target.className === )
+    // console.log(event.target);
+    // console.log(event.target.className);
+    // console.log("---------------");
+    let row;
+    if (event.target.className === "btn btn-outline-secondary btn-sm cart_plus") {
+        row = event.target.parentNode.parentNode;
+    } else {
+        row = event.target.parentNode.parentNode.parentNode;
+    }
 
-    jQuery.ajax(
-        {
-            dataType: "json",
-            url: "api/add-to-cart",
-            method: "POST",
-            data:
-                {
-                    "title": title,
-                    "price": price
-                }
-            // success: (resultData) => handleMovieResult(resultData)
-        }
-    )
+    // let row = event.target.parentNode.parentNode;
+    let cells = row.getElementsByTagName("td");
+    // console.log(row);
+    // console.log(cells);
+
+    let title = cells[0].innerText;
+    let price = parseFloat(cells[5].innerText.slice(1));
+    console.log(title + " costs " + price);
+    console.log(price);
+
+    // jQuery.ajax(
+    //     {
+    //         dataType: "json",
+    //         url: "api/add-to-cart",
+    //         method: "POST",
+    //         data:
+    //             {
+    //                 "title": title,
+    //                 "price": price
+    //             }
+    //         // success: (resultData) => handleMovieResult(resultData)
+    //     }
+    // )
 }
 
 
