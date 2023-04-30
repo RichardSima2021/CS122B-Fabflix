@@ -36,6 +36,12 @@ public class SubmitPaymentServlet extends HttpServlet {
         String cardNumber = request.getParameter("card_number");
         String expiration = request.getParameter("expiration");
 
+        HttpSession session = request.getSession();
+        ShoppingCart cart = (ShoppingCart) session.getAttribute("cart");
+        if (cart == null){
+            cart = new ShoppingCart();
+            session.setAttribute("cart", cart);
+        }
 
 
 
@@ -53,7 +59,7 @@ public class SubmitPaymentServlet extends HttpServlet {
                 // no such user
                 System.out.println("payment failed");
                 responseJsonObject.addProperty("status", "fail");
-                request.getServletContext().log("Login failed");
+                request.getServletContext().log("Payment failed");
                 responseJsonObject.addProperty("message", "Incorrect Payment Information");
             }
             else{
@@ -63,6 +69,7 @@ public class SubmitPaymentServlet extends HttpServlet {
                 System.out.println("payment success");
                 responseJsonObject.addProperty("status", "success");
                 responseJsonObject.addProperty("message", "success");
+                cart.clear();
                 System.out.println("submit payment success");
             }
 
@@ -82,6 +89,9 @@ public class SubmitPaymentServlet extends HttpServlet {
 
             // Set response status to 500 (Internal Server Error)
             response.setStatus(500);
+        }
+        finally{
+            response.getWriter().close();
         }
 //        response.getWriter().write(responseJsonObject.toString());
     }
