@@ -57,7 +57,6 @@ public class SubmitPaymentServlet extends HttpServlet {
 //            select * from creditcards where id = 960 and firstNmae = "t" and lastName = "t" and expiration = DATE("2005-11-20");
             String query = "SELECT * FROM creditcards WHERE firstName = \"" + firstName + "\" and lastName = \"" + lastName + "\" and id = \"" + cardNumber + "\" and expiration = DATE(\"" + expiration + "\")";
             ResultSet rs = getUserStatement.executeQuery(query);
-//            System.out.println(rs);
             if(cart.isEmpty()){
 //                System.out.println("Cart is empty");
                 responseJsonObject.addProperty("status","fail");
