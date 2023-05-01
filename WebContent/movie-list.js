@@ -142,7 +142,7 @@ function prevPageClicked(){
     console.log(currentPage);
     if(currentPage === 1){
         console.log("Already page 1");
-        window.alert("Already on Page 1");
+        // window.alert("Already on Page 1");
     }
     else{
         console.log("Going to previous page")
@@ -165,7 +165,7 @@ function prevPageClicked(){
 var nextButton = document.getElementById("nextButton");
 nextButton.addEventListener("click",nextPageClicked);
 function noNext(){
-    window.alert("No next page");
+    // window.alert("No next page");
 }
 function nextPageClicked(){
     console.log("next button clicked");
