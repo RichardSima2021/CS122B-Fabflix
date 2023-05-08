@@ -13,20 +13,9 @@ let search_form = $("#search_form")
 
 function handleResult(resultData) {
 
-    console.log("handleResult: populating movie info from resultData");
-
-    // populate the star info h3
-    // find the empty h3 body by id "movie_info"
-    // let starInfoElement = jQuery("#genre_info");
-
-    // // append two html <p> created to the h3 body, which will refresh the page
-    // starInfoElement.append("<p id=\"losinfo\">" + resultData[0]["title"]
-    //     + "<span style=\"font-size:20px;\">"+" (" + resultData[0]["year"] + ")" + "</span>" + "</p>");
-
-    // starInfoElement.append("<p> " + resultData[0]["year"] + "</p>");
     console.log("handleResult: populating genre table from resultData");
 
-    // Populate the star table
+    // Populate the genre table
     // Find the empty table body by id "movie_table_body"
     let genreTableBodyElement = jQuery("#genre_table_body");
 
@@ -43,8 +32,7 @@ function handleResult(resultData) {
         genreTableBodyElement.append(rowHTML);
     }
 
-    // let titleInfoElement = jQuery("#title_info");
-    console.log("handleResult: populating genre table from resultData");
+    // Populate Browse by Title Char
     let titleTableBodyElement = jQuery("#title_table_body");
     for (let i = 65; i <=90; i++)
     {
@@ -57,7 +45,7 @@ function handleResult(resultData) {
         titleTableBodyElement.append(rowHTML);
     }
 
-    console.log("handleResult: populating genre table from resultData");
+    // Populate Browse by Digits
     let digittitleTableBodyElement = jQuery("#digit_title_table_body");
     for (let i = 0; i <=9; i++)
     {
@@ -80,9 +68,7 @@ function handleResult(resultData) {
 }
 
 function submitSearchForm(formSubmitEvent){
-    // console.log("what's going on here");
     formSubmitEvent.preventDefault();
-    // console.log("submit search form from browse page");
 
     let searchURL = "movie-list.html?filter=search";
     let searchByTitle = "&searchByTitle=" + document.querySelector("#searchTitle").value;
@@ -99,15 +85,17 @@ function submitSearchForm(formSubmitEvent){
  * Once this .js is loaded, following scripts will be executed by the browser\
  */
 
-// Get id from URL
-// let genre = getParameterByName('id');
+function loadPage(){
+    // Makes the HTTP GET request and registers on success callback function handleResult
+    jQuery.ajax({
+        dataType: "json",  // Setting return data type
+        method: "GET",// Setting request method
+        url: "api/browse", // Setting request url, which is mapped by BrowseServlet in Browse.java
+        success: (resultData) => handleResult(resultData) // Setting callback function to handle data returned successfully by the BrowseServlet
+    });
+}
 
-// Makes the HTTP GET request and registers on success callback function handleResult
-jQuery.ajax({
-    dataType: "json",  // Setting return data type
-    method: "GET",// Setting request method
-    url: "api/browse", // Setting request url, which is mapped by BrowseServlet in Browse.java
-    success: (resultData) => handleResult(resultData) // Setting callback function to handle data returned successfully by the BrowseServlet
-});
+loadPage();
+
 
 search_form.submit(submitSearchForm);
