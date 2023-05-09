@@ -266,7 +266,7 @@ public class MovieListServlet extends HttpServlet {
 
             query = query + selectFiltered + orderBy + limitOffset;
 
-            System.out.println(query);
+//            System.out.println(query);
 
 
             PreparedStatement prepStatement = conn.prepareStatement(query);

@@ -181,7 +181,7 @@ public class SingleMovieServlet extends HttpServlet {
             getGenresStatement.close();
             genresResult.close();
 
-            System.out.println(jsonArray.toString());
+//            System.out.println(jsonArray.toString());
             // Write JSON string to output
             out.write(jsonArray.toString());
 
