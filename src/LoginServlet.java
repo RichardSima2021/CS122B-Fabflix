@@ -11,6 +11,7 @@ import javax.sql.DataSource;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.sql.Connection;
+import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.Statement;
 import java.io.IOException;
@@ -39,10 +40,10 @@ public class LoginServlet extends HttpServlet {
         JsonObject responseJsonObject = new JsonObject();
 
         try (Connection conn = dataSource.getConnection()) {
-            Statement getUserStatement = conn.createStatement();
-
-            String query = "SELECT password, id FROM customers WHERE email = \"" + email + "\"";
-            ResultSet rs = getUserStatement.executeQuery(query);
+            String query = "SELECT password, id FROM customers WHERE email = ?";
+            PreparedStatement getUserStatement = conn.prepareStatement(query);
+            getUserStatement.setString(1,email);
+            ResultSet rs = getUserStatement.executeQuery();
             if(rs.next() == false){
                 // no such user
                 responseJsonObject.addProperty("status", "fail");
