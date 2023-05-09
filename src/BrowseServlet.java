@@ -57,9 +57,8 @@ public class BrowseServlet extends HttpServlet {
 
             JsonObject genreJson = new JsonObject();
 
-            String getGenresQuery = "SELECT * FROM genres";
-            Statement getGenresStatement = conn.createStatement();
-            ResultSet genresResult = getGenresStatement.executeQuery(getGenresQuery);
+            PreparedStatement getGenresStatement = conn.prepareStatement("SELECT * FROM genres");
+            ResultSet genresResult = getGenresStatement.executeQuery();
             JsonArray genresArray = new JsonArray();
 //            genresResult.next();
             while (genresResult.next())

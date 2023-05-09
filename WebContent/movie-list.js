@@ -38,8 +38,8 @@ function handleMovieResult(resultData) {
     // console.log(window.location.href);
     // Populate the movie table
     // Find the empty table body by id "star_table_body"
-    let starTableBodyElement = jQuery("#movie_table_body");
-    starTableBodyElement.empty();
+    let movieTableBodyElement = jQuery("#movie_table_body");
+    movieTableBodyElement.empty();
     // Iterate through resultData
     for (let i = 0; i < resultData.length-1; i++) {
 
@@ -88,7 +88,7 @@ function handleMovieResult(resultData) {
         rowHTML += "</tr>";
 
         // Append the row created to the table body, which will refresh the page
-        starTableBodyElement.append(rowHTML);
+        movieTableBodyElement.append(rowHTML);
     }
     document.getElementById("pageNumber").innerHTML = resultData[resultData.length-1];
 
