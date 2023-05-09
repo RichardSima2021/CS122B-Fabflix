@@ -14,6 +14,7 @@ import javax.sql.DataSource;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.sql.Connection;
+import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.Statement;
 import java.util.ArrayList;
@@ -148,7 +149,6 @@ public class MovieListServlet extends HttpServlet {
 //        System.out.println("Sort by " + sortOrder);
 
 //        System.out.println("Tf");
-
         // Output stream to STDOUT
         PrintWriter out = response.getWriter();
         // Get a connection from dataSource and let resource manager close the connection after usage.
@@ -162,7 +162,7 @@ public class MovieListServlet extends HttpServlet {
             int offset = (page-1) * resultsPerPage;
 
             String orderBy = " ORDER BY "; // This may be changed by update or search
-
+            ArrayList<String> parameters = new ArrayList<>();
             String limitOffset = "LIMIT " + resultsPerPage + " OFFSET " + offset; // this is always auto completed
 //            System.out.println(limitOffset);
             if(filter.equals("browse")){
@@ -171,6 +171,10 @@ public class MovieListServlet extends HttpServlet {
                     // Browse By Genre
                     query += "SELECT m.id, m.title, m.year, m.director FROM movies m, genres_in_movies gim, genres g "+
                             "WHERE m.id = gim.movieId AND gim.genreId = g.id AND g.name = \"" + browseByGenre + "\")";
+                    session.removeAttribute("star");
+                    session.removeAttribute("title");
+                    session.removeAttribute("year");
+                    session.removeAttribute("director");
 
                 }
                 else if(!browseByTitle.equals("")){
@@ -182,11 +186,30 @@ public class MovieListServlet extends HttpServlet {
                         browseByTitle += "%";
                         query += "SELECT m.id, m.title, m.year, m.director FROM movies m WHERE m.title LIKE \"" + browseByTitle + "\")";
                     }
-
+                    session.removeAttribute("star");
+                    session.removeAttribute("title");
+                    session.removeAttribute("year");
+                    session.removeAttribute("director");
                 }
                 else{
 //                    System.out.println("Return from single page");
                     // return would still submit a browse but without any parameters
+                    if(session.getAttribute("star") != null){
+                        parameters.add("star");
+                        searchByStar = (String) session.getAttribute("star");
+                    }
+                    if(session.getAttribute("title") != null){
+                        parameters.add("title");
+                        searchByTitle = (String) session.getAttribute("title");
+                    }
+                    if(session.getAttribute("year") != null){
+                        parameters.add("year");
+                        searchByYear = (String) session.getAttribute("year");
+                    }
+                    if(session.getAttribute("director") != null){
+                        parameters.add("director");
+                        searchByDirector = (String) session.getAttribute("director");
+                    }
                     query = (String) session.getAttribute("query");
                     sortOrder = (String) session.getAttribute("sortOrder");
                 }
@@ -201,16 +224,28 @@ public class MovieListServlet extends HttpServlet {
                 String where = "WHERE m.id = m.id ";
                 if(searchByStar != null && !searchByStar.equals("")){
                     from += " ,stars_in_movies sim, stars s ";
-                    where += "AND sim.movieId = m.id AND sim.starId = s.id AND s.name LIKE \"%" + searchByStar + "%\"" ;
+//                    where += "AND sim.movieId = m.id AND sim.starId = s.id AND s.name LIKE \"%" + searchByStar + "%\"" ;
+                    where += "AND sim.movieId = m.id AND sim.starId = s.id AND s.name LIKE ?" ;
+                    parameters.add("star");
+                    session.setAttribute("star", searchByStar);
                 }
                 if(searchByTitle != null && !searchByTitle.equals("")){
-                    where += "AND m.title LIKE \"%" + searchByTitle + "%\" ";
+//                    where += "AND m.title LIKE \"%" + searchByTitle + "%\" ";
+                    where += "AND m.title LIKE ?";
+                    parameters.add("title");
+                    session.setAttribute("title", searchByTitle);
                 }
                 if(searchByYear != null && !searchByYear.equals("")){
-                    where += "AND m.year = " + searchByYear + " ";
+//                    where += "AND m.year = " + searchByYear + " ";
+                    where += "AND m.year = ?";
+                    parameters.add("year");
+                    session.setAttribute("year", searchByYear);
                 }
                 if(searchByDirector!= null && !searchByDirector.equals("")){
-                    where += "AND m.director LIKE \"%" + searchByDirector + "%\"";
+//                    where += "AND m.director LIKE \"%" + searchByDirector + "%\"";
+                    where += "AND m.director LIKE ?";
+                    parameters.add("director");
+                    session.setAttribute("director", searchByDirector);
                 }
                 where += ")";
                 query = withStatement + select + from + where;
@@ -228,14 +263,37 @@ public class MovieListServlet extends HttpServlet {
                 orderBy += sortOrder;
             }
 
+
             query = query + selectFiltered + orderBy + limitOffset;
 
+            System.out.println(query);
+
+
+            PreparedStatement prepStatement = conn.prepareStatement(query);
+            for(int i = 0; i < parameters.size(); i++){
+                if(parameters.get(i).equals("star")){
+                    searchByStar = "%" + searchByStar + "%";
+                    prepStatement.setString(i+1, searchByStar);
+                }
+                else if(parameters.get(i).equals("title")){
+                    searchByTitle = "%" + searchByTitle + "%";
+                    prepStatement.setString(i+1, searchByTitle);
+                }
+                else if(parameters.get(i).equals("year")){
+                    prepStatement.setInt(i+1, Integer.parseInt(searchByYear));
+                }
+                else if(parameters.get(i).equals("director")){
+                    searchByDirector = "%" + searchByDirector + "%";
+                    prepStatement.setString(i+1, searchByDirector);
+                }
+            }
+
 //            System.out.println("debug");
-//            System.out.println(query);
+
 //            System.out.println("debug");
 
             // Perform the query
-            ResultSet movieIDSet = statement.executeQuery(query);
+            ResultSet movieIDSet = prepStatement.executeQuery();
             JsonArray jsonArray = new JsonArray();
             if(movieIDSet.next() == false){
                 throw new RuntimeException("no results on this page");
