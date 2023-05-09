@@ -22,6 +22,7 @@ public class LoginServlet extends HttpServlet {
      * @see HttpServlet#doGet(HttpServletRequest request, HttpServletResponse response)
      */
     private DataSource dataSource;
+    private static final long serialVersionUID = 1L;
 
     public void init(ServletConfig config) {
         try {
@@ -31,11 +32,21 @@ public class LoginServlet extends HttpServlet {
         }
     }
     protected void doPost(HttpServletRequest request, HttpServletResponse response) throws IOException {
+
         String email = request.getParameter("email");
         String password = request.getParameter("password");
         int id;
+        String gRecaptchaResponse = request.getParameter("g-recaptcha-response");
+        System.out.println("gRecaptchaResponse=" + gRecaptchaResponse);
 
+        // Verify reCAPTCHA
+        try {
+            RecaptchaVerifyUtils.verify(gRecaptchaResponse);
+        } catch (Exception e) {
 
+//            TODO: need to change what to do if not verify
+            return;
+        }
 
         JsonObject responseJsonObject = new JsonObject();
 
