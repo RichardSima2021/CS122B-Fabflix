@@ -78,34 +78,22 @@ public class LoginServlet extends HttpServlet {
                     request.getServletContext().log("Login failed");
                     responseJsonObject.addProperty("message", "incorrect password");
                 }
-//                if(!checkPassword.equals(password)){
-//                    // wrong password
-//                    responseJsonObject.addProperty("status", "fail");
-//                    request.getServletContext().log("Login failed");
-//                    responseJsonObject.addProperty("message", "incorrect password");
-//                }
-//                else{
-//                    // existing user and correct password
-//                    // This is the only place we refer to it as user vs email because this is stored to session
-//                    id = rs.getInt("id");
-////                    System.out.println("User id = " + )
-//                    request.getSession().setAttribute("user", new User(email, id));
-//                    responseJsonObject.addProperty("status", "success");
-//                    responseJsonObject.addProperty("message", "success");
-//                }
             }
-
+            response.getWriter().write(responseJsonObject.toString());
         }catch (Exception e) {
 
             // Write error message JSON object to output
             JsonObject jsonObject = new JsonObject();
             jsonObject.addProperty("errorMessage", e.getMessage());
             System.out.println(jsonObject);
-            response.getWriter().write(responseJsonObject.toString());
+            response.getWriter().write(jsonObject.toString());
 
             // Set response status to 500 (Internal Server Error)
             response.setStatus(500);
         }
-        response.getWriter().write(responseJsonObject.toString());
+        finally {
+            response.getWriter().close();
+        }
+
     }
 }
