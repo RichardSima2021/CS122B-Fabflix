@@ -69,6 +69,7 @@ public class LoginServlet extends HttpServlet {
                 if(success){
                     id = rs.getInt("id");
                     request.getSession().setAttribute("user", new User(email, id));
+                    request.getSession().setAttribute("accountType","user");
                     responseJsonObject.addProperty("status", "success");
                     responseJsonObject.addProperty("message", "success");
                 }

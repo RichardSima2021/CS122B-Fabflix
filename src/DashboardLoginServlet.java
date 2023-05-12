@@ -37,7 +37,7 @@ public class DashboardLoginServlet extends HttpServlet{
         String providedPassword = request.getParameter("password");
 
 
-//        System.out.println("Attempted login with: " + email + ", " + providedPassword);
+        System.out.println("Attempted login with: " + email + ", " + providedPassword);
         JsonObject responseJsonObject = new JsonObject();
 
         PrintWriter out = response.getWriter();
@@ -60,6 +60,7 @@ public class DashboardLoginServlet extends HttpServlet{
                 if(success){
                     String fullname = rs.getString("fullname");
                     request.getSession().setAttribute("employee", new Employee(email, fullname));
+                    request.getSession().setAttribute("accountType","employee");
                     responseJsonObject.addProperty("status","success");
                     responseJsonObject.addProperty("message","success");
                 }

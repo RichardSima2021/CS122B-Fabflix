@@ -45,7 +45,7 @@ public class DashboardServlet extends HttpServlet{
                 responseJsonArray.add(currentTable);
             }
 
-            printJsonArray(responseJsonArray);
+//            printJsonArray(responseJsonArray);
 
             tables.close();
             out.write(responseJsonArray.toString());
