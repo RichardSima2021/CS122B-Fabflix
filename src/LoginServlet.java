@@ -15,6 +15,8 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.Statement;
 import java.io.IOException;
+import org.jasypt.util.password.StrongPasswordEncryptor;
+
 
 @WebServlet(name = "LoginServlet", urlPatterns = "/api/login")
 public class LoginServlet extends HttpServlet {
@@ -62,22 +64,35 @@ public class LoginServlet extends HttpServlet {
                 responseJsonObject.addProperty("message", "email " + email + " doesn't exist");
             }
             else{
-                String checkPassword = rs.getString("password");
-                if(!checkPassword.equals(password)){
+                String encryptedPassword = rs.getString("password");
+                boolean success = new StrongPasswordEncryptor().checkPassword(password, encryptedPassword);
+                if(success){
+                    id = rs.getInt("id");
+                    request.getSession().setAttribute("user", new User(email, id));
+                    responseJsonObject.addProperty("status", "success");
+                    responseJsonObject.addProperty("message", "success");
+                }
+                else{
                     // wrong password
                     responseJsonObject.addProperty("status", "fail");
                     request.getServletContext().log("Login failed");
                     responseJsonObject.addProperty("message", "incorrect password");
                 }
-                else{
-                    // existing user and correct password
-                    // This is the only place we refer to it as user vs email because this is stored to session
-                    id = rs.getInt("id");
-//                    System.out.println("User id = " + )
-                    request.getSession().setAttribute("user", new User(email, id));
-                    responseJsonObject.addProperty("status", "success");
-                    responseJsonObject.addProperty("message", "success");
-                }
+//                if(!checkPassword.equals(password)){
+//                    // wrong password
+//                    responseJsonObject.addProperty("status", "fail");
+//                    request.getServletContext().log("Login failed");
+//                    responseJsonObject.addProperty("message", "incorrect password");
+//                }
+//                else{
+//                    // existing user and correct password
+//                    // This is the only place we refer to it as user vs email because this is stored to session
+//                    id = rs.getInt("id");
+////                    System.out.println("User id = " + )
+//                    request.getSession().setAttribute("user", new User(email, id));
+//                    responseJsonObject.addProperty("status", "success");
+//                    responseJsonObject.addProperty("message", "success");
+//                }
             }
 
         }catch (Exception e) {
