@@ -19,7 +19,7 @@ function submitLoginForm(formSubmitEvent){
     formSubmitEvent.preventDefault();
 
     $.ajax(
-        "api/dashboard_login",
+        "../api/dashboard_login",
         {
             dataType:"json",
             method:"POST",
