@@ -1,7 +1,5 @@
 let login_form = $("#employee_login_form");
 function handleLoginResult(resultData){
-    console.log(resultData);
-    console.log(resultData["status"])
     if(resultData["status"] === "success"){
         console.log("login success");
         window.location.replace("dashboard.html");
