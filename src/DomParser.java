@@ -20,10 +20,10 @@ public class DomParser {
         parseXmlFile(XMLFile);
 
         // get each employee element and create a Employee object
-        parseDocument();
+//        parseDocument();
 
         // iterate through the list and print the data
-        printData();
+//        printData();
 
     }
     private void parseXmlFile(String XMLFile) {

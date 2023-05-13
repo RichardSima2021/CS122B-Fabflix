@@ -2,11 +2,18 @@ let add_movie_form = $("#new_movie_form");
 
 function handleAddMovieResult(resultData){
 
-    if(resultData["status"] === "success"){
-        $("#add_movie_result_message").text("Successfully added new movie, ID: " + resultData["newID"]);
+    if(resultData["status"] === "Inserted"){
+        let resultMessage = "Added new movie, movieID: " + resultData["movieID"] + ".";
+        if(resultData["newStarEntry"]){
+            resultMessage += " New Star added, starID: " + resultData["starID"] + ".";
+        }
+        if(resultData["newGenreEntry"]){
+            resultMessage += " New Genre added, genreID: " + resultData["genreID"] + ".";
+        }
+        $("#add_movie_result_message").text(resultMessage);
     }
     else{
-        $("#add_movie_result_message").text("Add movie failed: " + resultData["errorMessage"]);
+        $("#add_movie_result_message").text("Movie Exists");
     }
 }
 
