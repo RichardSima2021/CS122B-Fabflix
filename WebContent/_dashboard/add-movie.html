@@ -2,9 +2,53 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
+    <meta name="viewport"
+          content="width=device-width, initial-scale=1, shrink-to-fit=no">
+
+    <!-- Bootstrap CSS -->
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css"
+          integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous">
+
+    <!-- adding CSS -->
+    <link rel="stylesheet" href ="./style.css" >
     <title>Add Movie</title>
 </head>
-<body>
+<body class = "body payment_body">
+<div class = "payment_container">
+    <span class = "payment_head">ADD A MOVIE</span>
+    <span style="color: #6096B4; font-weight: bold; font-size: 40px">New Movie Details</span>
+    <form id="new_movie_form" method="GET" style="display: flex; flex-direction: column; width:50%; gap: 3px">
+        <div class="input-group flex-nowrap">
+            <span class="input-group-text" style="width:30%; display: flex; justify-content: center;">Movie Title</span>
+            <input type = "text" class="form-control" name = "title" placeholder="Enter New Movie Title" required>
+        </div>
+        <div class="input-group flex-nowrap ">
+            <span class="input-group-text" style="width:30%;display: flex;justify-content: center;">Year</span>
+            <input type = "number" class="form-control" name = "birth_year" placeholder="Enter Year">
+        </div>
+        <div class="input-group flex-nowrap">
+            <span class="input-group-text" style="width:30%; display: flex; justify-content: center;">Director</span>
+            <input type = "text" class="form-control" name = "director" placeholder="Enter Director">
+        </div>
+        <div class="input-group flex-nowrap">
+            <span class="input-group-text" style="width:30%; display: flex; justify-content: center;">Star Name</span>
+            <input type = "text" class="form-control" name = "star_name" placeholder="Enter New Star Name">
+        </div>
+        <div class="input-group flex-nowrap ">
+            <span class="input-group-text" style="width:30%;display: flex;justify-content: center;">Birth Year</span>
+            <input type = "number" class="form-control" name = "birth_year" placeholder="Enter Birth Year">
+        </div>
+        <div class="input-group flex-nowrap">
+            <span class="input-group-text" style="width:30%; display: flex; justify-content: center;">Genre</span>
+            <input type = "text" class="form-control" name = "director" placeholder="Enter Genre Name">
+        </div>
+        <button type="submit" class="btn btn-outline-secondary btn-md" style=" font-weight: bold">Add</button>
+
+    </form>
+
+    <div id="add_movie_result_message"></div>
+</div>
+
 
 
 <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>

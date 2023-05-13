@@ -46,7 +46,6 @@ public class LoginServlet extends HttpServlet {
             RecaptchaVerifyUtils.verify(gRecaptchaResponse);
         } catch (Exception e) {
 
-//            TODO: need to change what to do if not verify
             return;
         }
 

@@ -16,8 +16,8 @@ function generateTable(tableData){
     for(var tableName in tableData){
         // console.log(tableName);
         tableHTML += tableName + "</h1>";
-        tableHTML += "<table>";
-        tableHTML += "<thead>" +
+        tableHTML += "<table class=\"table table-striped table-hover\">";
+        tableHTML += "<thead class=\"table-dark\">" +
                         "<tr>" +
                             "<th>" + "Attribute" + "</th>" +
                             "<th>" + "Type" + "</th>" +

@@ -35,7 +35,15 @@ public class DashboardLoginServlet extends HttpServlet{
     protected void doPost(HttpServletRequest request, HttpServletResponse response) throws IOException{
         String email = request.getParameter("email");
         String providedPassword = request.getParameter("password");
+        String gRecaptchaResponse = request.getParameter("g-recaptcha-response");
 
+        // Verify reCAPTCHA
+        try {
+            RecaptchaVerifyUtils.verify(gRecaptchaResponse);
+        } catch (Exception e) {
+
+            return;
+        }
 
         System.out.println("Attempted login with: " + email + ", " + providedPassword);
         JsonObject responseJsonObject = new JsonObject();

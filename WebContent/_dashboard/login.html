@@ -3,23 +3,40 @@
 <head>
     <meta charset="UTF-8">
     <title>Employee Login</title>
+    <!-- Bootstrap CSS -->
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css"
+          integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous">
+
+    <!-- adding CSS -->
+    <link rel="stylesheet" href ="style.css" >
 </head>
-<body>
+<body class = "body payment_body">
+<div class = "payment_container">
+    <svg xmlns="http://www.w3.org/2000/svg" width="70" height="70" fill="#205295" class="bi bi-camera-reels" viewBox="0 0 16 16">
+        <path d="M6 3a3 3 0 1 1-6 0 3 3 0 0 1 6 0zM1 3a2 2 0 1 0 4 0 2 2 0 0 0-4 0z"/>
+        <path d="M9 6h.5a2 2 0 0 1 1.983 1.738l3.11-1.382A1 1 0 0 1 16 7.269v7.462a1 1 0 0 1-1.406.913l-3.111-1.382A2 2 0 0 1 9.5 16H2a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h7zm6 8.73V7.27l-3.5 1.555v4.35l3.5 1.556zM1 8v6a1 1 0 0 0 1 1h7.5a1 1 0 0 0 1-1V8a1 1 0 0 0-1-1H2a1 1 0 0 0-1 1z"/>
+        <path d="M9 6a3 3 0 1 0 0-6 3 3 0 0 0 0 6zM7 3a2 2 0 1 1 4 0 2 2 0 0 1-4 0z"/>
+    </svg>
+    <span class = "payment_head">Employee Login</span>
     <form id="employee_login_form" method="post">
-        <label><b>Email</b></label>
-        <label>
-            <input name="email" placeholder="Enter Email" type="text">
-        </label>
-        <br>
-        <label><b>Password</b></label>
-        <label>
-            <input name="password" placeholder="Enter Password" type="password">
-        </label>
-        <br>
-        <input type="submit" value="Login">
+        <div class = "name_input" style="display: grid; grid-row-gap: 3px">
+            <div class="input-group flex-nowrap">
+                <span class="input-group-text" style="width:30%; display: flex; justify-content: center;">Email</span>
+                <input type = "text" class="form-control" name = "email" placeholder="Enter Email">
+            </div>
+            <div class="input-group flex-nowrap ">
+                <span class="input-group-text" style="width:30%;display: flex;justify-content: center;">Password</span>
+                <input type = "password" class="form-control" name = "password" placeholder="Enter Password">
+            </div>
+            <button type="submit" class="btn btn-outline-secondary btn-md" style=" font-weight: bold">Login</button>
+            <div class="g-recaptcha" data-sitekey="6LeLlfIlAAAAAMfH0XVeqzaM7hJjz0KYecYUJgIU"></div>
+        </div>
+
     </form>
 
     <div id="login_error_message"></div>
+</div>
+
 
 
     <!-- include jQuery-->
@@ -29,6 +46,6 @@
     <!-- include our own JS file -->
     <script src="login.js"></script>
     <!--include reCaptcha-->
-<!--    <script src='https://www.google.com/recaptcha/api.js' type="text/javascript"></script>-->
+    <script src='https://www.google.com/recaptcha/api.js' type="text/javascript"></script>
 </body>
 </html>
