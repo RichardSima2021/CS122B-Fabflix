@@ -70,7 +70,7 @@ public class AddMovieServlet extends HttpServlet{
             addMovieStatement.registerOutParameter(11, Types.BOOLEAN);
             addMovieStatement.registerOutParameter(12, Types.BOOLEAN);
 
-            System.out.println(addMovieStatement.toString());
+//            System.out.println(addMovieStatement.toString());
 
 //            System.out.println("Debug");
 

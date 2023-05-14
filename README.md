@@ -4,7 +4,7 @@ Contributions:
 
 Lisa Chen: CSS design and implementation, Shopping Cart, Checkout, Browse frontend, CartItem, User, Submit Payment
 
-Richard Sima: Shopping Cart Servlet, Browse Servlet, Movie List js and servlet, login, Submit Payment
+Richard Sima: Shopping Cart Servlet, Browse Servlet, XmlParser.Movie List js and servlet, login, Submit Payment
 
 
 \
