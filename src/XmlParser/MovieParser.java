@@ -106,7 +106,7 @@ public class MovieParser {
         DocumentBuilderFactory documentBuilderFactory = DocumentBuilderFactory.newInstance();
         try{
             DocumentBuilder documentBuilder = documentBuilderFactory.newDocumentBuilder();
-            movieDoc = documentBuilder.parse("mains243.xml");
+            movieDoc = documentBuilder.parse("stanford_movies/mains243.xml");
         }
         catch(ParserConfigurationException | SAXException | IOException error) {
             error.printStackTrace();
@@ -246,8 +246,10 @@ public class MovieParser {
 
     private String[] getGenres(Element filmElement) throws MovieDataException {
         NodeList genresList = filmElement.getElementsByTagName("cat");
+        ArrayList<String> genresArrList = new ArrayList<>();
 
-        String genres[] = new String[genresList.getLength()];
+
+//        String genres[] = new String[genresList.getLength()];
         if(genresList.getLength() <= 0 || genresList.item(0).getFirstChild() == null){
             throw new MovieDataException("","No Genres", "cats", "null");
 //            String[] nullGenres = new String[1];
@@ -258,8 +260,16 @@ public class MovieParser {
             Element genreElement = (Element) genresList.item(i);
 //            String genre = getTextValue(genreElement,"cat");
             String genre = codesToGenres.get(genreElement.getFirstChild().getNodeValue());
-//            System.out.println(genre);
-            genres[i] = genre;
+            if(genre != null){
+                genresArrList.add(genre);
+            }
+        }
+        if(genresArrList.size() == 0){
+            throw new MovieDataException("","No Genres", "cats", "null");
+        }
+        String[] genres = new String[genresArrList.size()];
+        for(int i = 0; i < genresArrList.size(); i++){
+            genres[i] = genresArrList.get(i);
         }
         return genres;
     }
@@ -277,11 +287,8 @@ public class MovieParser {
 
 
     private void printData(){
-        Iterator movieIterator = moviesById.entrySet().iterator();
-        while(movieIterator.hasNext()){
-            Map.Entry movieEntry = (Map.Entry) movieIterator.next();
-            Movie movie = (Movie) movieEntry.getValue();
-            System.out.println(movie);
+        for(String id : moviesById.keySet()){
+            System.out.println(moviesById.get(id));
         }
 //        System.out.println(errorMovies.size() + " movies failed to parse");
     }
@@ -299,6 +306,7 @@ public class MovieParser {
         int year = movie.getYear();
         String director = movie.getDirector();
         String[] genres = movie.getGenres();
+        int[] genreIDs = new int[genres.length];
 
         try{
             String findExistingMovie = "SELECT * FROM movies WHERE UPPER(title) LIKE UPPER(?) AND year = ?";
@@ -321,9 +329,50 @@ public class MovieParser {
             insertStatement.setString(4, director);
             insertStatement.executeUpdate();
             insertStatement.close();
+
+            for(int i = 0; i < genres.length; i++){
+                String genre = genres[i];
+//                System.out.println(genre);
+                String findGenreQuery = "SELECT * FROM genres WHERE name = ?";
+                PreparedStatement findGenreStatement = connection.prepareStatement(findGenreQuery);
+
+                findGenreStatement.setString(1, genre);
+                ResultSet existingGenres = findGenreStatement.executeQuery();
+                if(existingGenres.next()){
+                    genreIDs[i] = existingGenres.getInt("id");
+                    existingGenres.close();
+                    findGenreStatement.close();
+                }
+                else{
+                    existingGenres.close();
+                    String addGenreQuery = "INSERT INTO genres(name) VALUES(?)";
+                    PreparedStatement addGenreStatement = connection.prepareStatement(addGenreQuery);
+                    addGenreStatement.setString(1,genre);
+                    addGenreStatement.executeUpdate();
+                    addGenreStatement.close();
+
+                    ResultSet getNewGenreId = findGenreStatement.executeQuery();
+                    getNewGenreId.next();
+                    genreIDs[i] = getNewGenreId.getInt("id");
+
+
+                    getNewGenreId.close();
+                    findGenreStatement.close();
+                }
+            }
+
+            for(int i = 0; i < genreIDs.length; i++){
+                String linkGenreAndMovieQuery = "INSERT INTO genres_in_movies(genreId, movieId) VALUES(?,?)";
+                PreparedStatement linkGenreAndMovieStatement = connection.prepareStatement(linkGenreAndMovieQuery);
+
+                linkGenreAndMovieStatement.setInt(1, genreIDs[i]);
+                linkGenreAndMovieStatement.setString(2, id);
+
+                linkGenreAndMovieStatement.executeUpdate();
+            }
         }
         catch(Exception e){
-//            System.out.println(e.getMessage());
+//            System.out.println(movie.getGenresInStr());
 //            System.out.println(movie);
             return false;
         }
@@ -334,12 +383,5 @@ public class MovieParser {
 
         movieParser.run();
 
-//        HashMap<String, Movie> movieMap = movieParser.getParsedMovies();
-//        HashMap<String, Integer> errorCounts = movieParser.getErrorCounts();
-//
-//        System.out.println("Inserted " + movieMap.size() + " movies");
-//        for(String error : errorCounts.keySet()){
-//            System.out.println(errorCounts.get(error) + " movies with " + error);
-//        }
     }
 }

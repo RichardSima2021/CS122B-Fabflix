@@ -22,13 +22,5 @@ public class Main {
         CastParser castParser = new CastParser(actorsByName, moviesById);
         castParser.run();
 
-        List<ActorInMovie> actorsInMovies = castParser.getActorsInMovies();
-
-        for(ActorInMovie actorInMovie : actorsInMovies){
-            System.out.println(actorInMovie);
-        }
-
-        System.out.println(actorsInMovies.size());
-
     }
 }
