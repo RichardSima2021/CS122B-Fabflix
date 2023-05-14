@@ -17,7 +17,7 @@ public class ActorParser {
     HashMap<String,Actor> actorsByName = new HashMap<String, Actor>();
     int duplicateActors;
     Document actorDocument;
-
+    HashMap<String, String> existingActorsByName;
     String loginUser;
     String loginPasswd;
     String loginUrl;
@@ -116,6 +116,10 @@ public class ActorParser {
         }
     }
 
+    public HashMap<String, String> getExistingActorsByName(){
+        return existingActorsByName;
+    }
+
     private boolean insertIntoDatabase(Actor actor) throws SQLException{
         String actorName = actor.getName();
         String actorID = actor.getId();
@@ -145,6 +149,7 @@ public class ActorParser {
                 ResultSet existingActors = findExistingStatement.executeQuery();
 
                 if(existingActors.next()){
+                    existingActorsByName.put(actorName, existingActors.getString("id"));
                     findExistingStatement.close();
                     existingActors.close();
                     return false;

@@ -35,7 +35,8 @@ public class MovieParser {
 //    List<String> errorMovies = new ArrayList<>();
     Document movieDoc;
     HashMap<String, String> codesToGenres;
-    HashMap<String, Movie> moviesById;
+    HashMap<String, Movie> moviesById; //movies by xml id
+    HashMap<String, String> existingXMLtoMovieID; // this stores movies that exist in the DB already so we can find via XMLid
     HashMap<String, Integer> errorCounts;
     String loginUser;
     String loginPasswd;
@@ -54,7 +55,7 @@ public class MovieParser {
 
         }
 
-
+        existingXMLtoMovieID = new HashMap<>();
         codesToGenres = new HashMap<>();
         codesToGenres.put("Susp", "Thriller");
         codesToGenres.put("CnR", "Crime");
@@ -189,6 +190,12 @@ public class MovieParser {
             return new Movie(title, year, directorName, genres, xmlID);
         }
         catch(MovieDataException e){
+//            if(title.equals("Star Wars")){
+//                System.out.println(title + " " + e.getMessage() + " " + e.getErroneousField() + " " + e.getErroneousValue());
+//            }
+            if(e.getErroneousValue().equals("2")){
+                System.out.println(title + " " + e.getMessage() + " " + e.getErroneousField() + " " + e.getErroneousValue());
+            }
             throw new MovieDataException(title, e.getMessage(), e.getErroneousField(), e.getErroneousValue());
         }
 
@@ -251,7 +258,7 @@ public class MovieParser {
 
 //        String genres[] = new String[genresList.getLength()];
         if(genresList.getLength() <= 0 || genresList.item(0).getFirstChild() == null){
-            throw new MovieDataException("","No Genres", "cats", "null");
+            throw new MovieDataException("","No Genres", "cats", "1");
 //            String[] nullGenres = new String[1];
 //            nullGenres[0] = null;
 //            return nullGenres;
@@ -265,7 +272,7 @@ public class MovieParser {
             }
         }
         if(genresArrList.size() == 0){
-            throw new MovieDataException("","No Genres", "cats", "null");
+            throw new MovieDataException("","No Genres", "cats", "2");
         }
         String[] genres = new String[genresArrList.size()];
         for(int i = 0; i < genresArrList.size(); i++){
@@ -288,7 +295,7 @@ public class MovieParser {
 
     private void printData(){
         for(String id : moviesById.keySet()){
-            System.out.println(moviesById.get(id));
+            System.out.println(id + moviesById.get(id));
         }
 //        System.out.println(errorMovies.size() + " movies failed to parse");
     }
@@ -298,6 +305,10 @@ public class MovieParser {
         for(String error : errorCounts.keySet()){
             System.out.println(errorCounts.get(error) + " movies had " + error);
         }
+    }
+
+    public HashMap<String,String> getExistingXMLtoMovieID(){
+        return existingXMLtoMovieID;
     }
 
     private boolean insertIntoDatabase(Movie movie){
@@ -316,6 +327,9 @@ public class MovieParser {
             findExistingStatement.setInt(2, year);
             ResultSet existingMovies = findExistingStatement.executeQuery();
             if(existingMovies.next()){
+                existingXMLtoMovieID.put(movie.getXmlID(),existingMovies.getString("id"));
+                findExistingStatement.close();
+                existingMovies.close();
                 return false;
             }
             findExistingStatement.close();

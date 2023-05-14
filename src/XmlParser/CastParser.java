@@ -9,6 +9,10 @@ import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
 import java.io.IOException;
+import java.sql.Connection;
+import java.sql.DriverManager;
+import java.sql.PreparedStatement;
+import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -16,18 +20,37 @@ import java.util.List;
 public class CastParser {
 //    private List<ActorInMovie> actorsInMovies = new ArrayList<>();
 
-    private HashMap<String, ArrayList<Actor>> moviesAndActors= new HashMap<String, ArrayList<Actor>>();
+    private HashMap<String, ArrayList<String>> moviesAndActorIDs = new HashMap<String, ArrayList<String>>();
     private Document castsDocument;
     private HashMap<String, Actor> actors;
     private HashMap<String, Movie> movies;
     private HashMap<String, Integer> errorCount;
+    private HashMap<String, String> existingXMLtoMovieID;
+    private HashMap<String, String> existingActors;
+    private int actorsAdded = 1;
+    private int moviesAddedInto = 1;
 
-    public static int actorsAdded = 1;
+    String loginUser;
+    String loginPasswd;
+    String loginUrl;
+    Connection connection;
 
-    public CastParser(HashMap<String,Actor> actors, HashMap<String, Movie> movies){
+    public CastParser(HashMap<String,Actor> actors, HashMap<String, Movie> movies, HashMap<String, String> existingMovies, HashMap<String, String> existingActors){
         this.actors = actors;
         this.movies = movies;
         this.errorCount = new HashMap<>();
+        loginUser = "mytestuser";
+        loginPasswd = "My6$Password";
+        loginUrl = "jdbc:mysql://localhost:3306/moviedb";
+        try{
+            Class.forName("com.mysql.jdbc.Driver").newInstance();
+            connection = DriverManager.getConnection(loginUrl, loginUser, loginPasswd);
+        }
+        catch(Exception e){
+
+        }
+        this.existingXMLtoMovieID = existingMovies;
+        this.existingActors = existingMovies;
     }
 
     public CastParser() {
@@ -38,7 +61,8 @@ public class CastParser {
         parseXmlFile();
         parseDocument();
 //        System.out.println(actorsAdded + " actors added");
-        printReport();
+        insertIntoDB();
+//        printReport();
     }
 
     private void parseXmlFile(){
@@ -71,11 +95,11 @@ public class CastParser {
     }
 
     private void parseFilm(Element filmElement){
-        String filmID = null;
+        String filmXMLID = null;
         String actorName = null;
         NodeList filmIDNode = filmElement.getElementsByTagName("f");
         if(filmIDNode.getLength() > 0){
-            filmID = filmIDNode.item(0).getFirstChild().getNodeValue();
+            filmXMLID = filmIDNode.item(0).getFirstChild().getNodeValue();
         }
         NodeList actorNameNode = filmElement.getElementsByTagName("a");
         try{
@@ -104,41 +128,98 @@ public class CastParser {
         }
         // try to find actor in parsed hashmap
         Actor actor = actors.get(actorName);
-
-        Movie movie = movies.get(filmID);
-
-        if(movie == null){
-//            System.out.println("Movie with ID: " + filmID + " not found");
-            if(errorCount.containsKey("Movies not provided for an actor")){
-                errorCount.put("Movies not provided for an actor", errorCount.get("Movies not provided for an actor")+1);
+        String actorId = null;
+        if(actor == null){
+            String existingActorId = existingActors.get(actorName);
+            if(existingActorId == null){
+                if(errorCount.containsKey("Actor not provided for movie")){
+                    errorCount.put("Actor not provided for movie", errorCount.get("Actor not provided for movie")+1);
+                }
+                else{
+                    errorCount.put("Actor not provided for movie", 1);
+                }
             }
             else{
-                errorCount.put("Movies not provided for an actor", 1);
-            }
-        }
-        else if(actor == null){
-//            System.out.println("Actor " + actorName + " for movie " + movie.getTitle() + " not found in actors database");
-            if(errorCount.containsKey("Actor not provided for movie")){
-                errorCount.put("Actor not provided for movie", errorCount.get("Actor not provided for movie")+1);
-            }
-            else{
-                errorCount.put("Actor not provided for movie", 1);
+                actorId = existingActorId;
             }
         }
         else{
-//            actorsInMovies.add(new ActorInMovie(actor, movie));
-            actorsAdded += 1;
-            if(!moviesAndActors.containsKey(filmID)){
-                moviesAndActors.put(filmID, new ArrayList<Actor>());
+            actorId = actor.getId();
+        }
+//        String actorId = actors.get(actorName).getId();
+
+        Movie movie = movies.get(filmXMLID);
+        String movieXmlId = null;
+        if(movie == null){
+            if(!existingXMLtoMovieID.containsKey(filmXMLID)){
+                if(errorCount.containsKey("Movies not provided for an actor")){
+                    errorCount.put("Movies not provided for an actor", errorCount.get("Movies not provided for an actor")+1);
+                }
+                else{
+                    errorCount.put("Movies not provided for an actor", 1);
+                }
             }
-            moviesAndActors.get(filmID).add(actor);
+            else{
+                movieXmlId = filmXMLID;
+            }
+        }
+        else{
+            movieXmlId = movie.getXmlID();
+        }
+
+        if(movieXmlId != null && actorId != null){
+            if(!moviesAndActorIDs.containsKey(filmXMLID)){
+                moviesAndActorIDs.put(filmXMLID, new ArrayList<String>());
+            }
+            moviesAndActorIDs.get(filmXMLID).add(actorId);
         }
 //        System.out.println(actorName + " in " + filmID);
     }
 
+    private void insertIntoDB(){
+        for(String movieId : moviesAndActorIDs.keySet()){
+            String movieDbId;
+            if(!movies.containsKey(movieId)){
+                // if can't find that xml id in the list of newly parsed movies
+                if(!existingXMLtoMovieID.containsKey(movieId)){
+                    // this movie doesn't exist within the database anywhere, can't link stars to id
+                    continue;
+                }
+                else{
+                    // it already exists in the db
+                    movieDbId = existingXMLtoMovieID.get(movieId);
+                }
+            }
+            else{
+                // if we can find this xml id in the new movies
+                movieDbId = movies.get(movieId).getId();
+            }
+            for(String actorId : moviesAndActorIDs.get(movieId)){
+                try{
+                    String insertStarInMovieQuery = "INSERT INTO stars_in_movies VALUES(?,?)";
+                    PreparedStatement insertStarInMovieStatement = connection.prepareStatement(insertStarInMovieQuery);
+
+                    insertStarInMovieStatement.setString(1, actorId);
+                    insertStarInMovieStatement.setString(2, movieDbId);
+
+//                    System.out.println(insertStarInMovieStatement);
+
+                    insertStarInMovieStatement.executeUpdate();
+                    insertStarInMovieStatement.close();
+                    actorsAdded += 1;
+                }
+                catch(SQLException e){
+                    System.out.println(e.getMessage());
+                }
+
+            }
+            moviesAddedInto += 1;
+
+        }
+    }
 
     public void printReport(){
-        System.out.println(actorsAdded + " actors added in " + moviesAndActors.keySet().size() + " movies" );
+        System.out.println(actorsAdded + " actors added in " + moviesAddedInto + " movies" );
         for(String error : errorCount.keySet()){
             System.out.println(error + ": " + errorCount.get(error));
         }
