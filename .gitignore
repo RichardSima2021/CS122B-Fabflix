@@ -108,7 +108,7 @@ buildNumber.properties
 !/.mvn/wrapper/maven-wrapper.jar
 
 ## ignoring stanford_movies
-stanford_movies
+#stanford_movies
 
 # End of https://www.gitignore.io/api/java,maven,eclipse,java-web,intellij
 
