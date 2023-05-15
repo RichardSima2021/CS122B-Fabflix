@@ -140,19 +140,6 @@ public class MovieParser {
             try{
                 Movie movie = parseMovie(movieElement, directorName);
 
-//                boolean inserted = insertIntoDatabase(movie);
-//                if(!inserted){
-//                    if(errorCounts.containsKey("Existing Movie"))
-//                    {
-//                        errorCounts.put("Existing Movie", errorCounts.get("Existing Movie") + 1);
-//                    }
-//                    else{
-//                        errorCounts.put("Existing Movie", 1);
-//                    }
-//                }
-//                else{
-//                  moviesById.put(movie.getXmlID(), movie);
-//                }
 
                 moviesById.put(movie.getXmlID(), movie);
             }
