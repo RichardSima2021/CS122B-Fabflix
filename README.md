@@ -67,3 +67,6 @@ codesToGenres.put("Faml", "Family");\
 codesToGenres.put("Surl", "Surreal");\
 codesToGenres.put("AvGa", "Avant Garde");\
 codesToGenres.put("Hist", "History");
+
+
+XML Report:

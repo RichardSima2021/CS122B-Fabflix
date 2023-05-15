@@ -68,20 +68,6 @@ public class ActorParser {
 
             Actor actor = parseActor(actorElement);
             actorsByName.put(actor.getName(), actor);
-//            try{
-////                System.out.println("Trying to insert " + actor);
-//                boolean inserted = insertIntoDatabase(actor);
-//                if(inserted){
-//
-////                    System.out.println("Inserted " + actor);
-//                }
-//                else{
-//                    duplicateActors += 1;
-//                }
-//            }
-//            catch(Exception e){
-////                System.out.println(e.getMessage());
-//            }
 
         }
     }
@@ -140,19 +126,6 @@ public class ActorParser {
                 String actorId = a.getId();
                 String actorName = a.getName();
                 int actorBirthYear = a.getYear();
-//                String findExistingActorName = "SELECT id FROM stars WHERE UPPER(name) LIKE UPPER(?)";
-//                PreparedStatement findExistingNameStatement = connection.prepareStatement(findExistingActorName);
-//                findExistingNameStatement.setString(1, a.getName());
-//                ResultSet sameName = findExistingNameStatement.executeQuery();
-//
-//                if(sameName.next()){
-//                    existingActorsByName.put(a.getName(), sameName.getString("id"));
-//                    duplicateActors += 1;
-//                    continue;
-//                }
-//
-//                findExistingNameStatement.close();
-//                sameName.close();
 
                 insertStatement.setString(1, actorId);
                 insertStatement.setString(2, actorName);

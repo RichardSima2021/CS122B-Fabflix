@@ -60,7 +60,6 @@ public class CastParser {
     public void run(){
         parseXmlFile();
         parseDocument();
-//        System.out.println(actorsAdded + " actors added");
         insertIntoDB();
         printReport();
     }
@@ -171,13 +170,6 @@ public class CastParser {
             movieXmlId = movie.getXmlID();
         }
 
-//        if(filmXMLID.equals("GgL3")){
-//            System.out.println("Found GgL3");
-//            System.out.println("Actor " + actorName);
-//            System.out.println(actor);
-//            System.out.println(actorId);
-//            System.out.println(movie);
-//        }
 
         if(movieXmlId != null && actorId != null){
             if(!moviesAndActorIDs.containsKey(filmXMLID)){
@@ -219,15 +211,10 @@ public class CastParser {
                         movieDbId = existingXMLtoMovieID.get(movieId);
 
                     }
-//                    if(movieId.equals("GyM35")){
-//                        System.out.println("debug " + movieDbId);
-//                    }
+
                 }
 
-//                if(movieId.equals("GyM35")){
-//                    System.out.println("GyM35 " + movieDbId);
-//                }
-//                System.out.println(movieDbId);
+
                 try{
                     PreparedStatement insertStarInMovieStatement = connection.prepareStatement(insertStarInMovieQuery);
                     connection.setAutoCommit(false);
@@ -237,15 +224,10 @@ public class CastParser {
                         insertStarInMovieStatement.setString(1, actorId);
                         insertStarInMovieStatement.setString(2, movieDbId);
                         insertStarInMovieStatement.addBatch();
-//                        if(starWars == true){
-//                            System.out.println(insertStarInMovieStatement);
-//                        }
-//                    System.out.println(insertStarInMovieStatement);
+
                     actorsAdded += 1;
                     }
-//                if(starWars == true){
-//                    System.out.println(insertStarInMovieStatement);
-//                }
+
                     insertStarInMovieStatement.executeLargeBatch();
                     connection.commit();
 
