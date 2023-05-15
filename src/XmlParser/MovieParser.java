@@ -358,8 +358,14 @@ public class MovieParser {
                 findExistingStatement.setString(1,movieTitle);
                 findExistingStatement.setInt(2, year);
                 ResultSet existingMovies = findExistingStatement.executeQuery();
+
                 if(existingMovies.next()){
-                    existingXMLtoMovieID.put(m.getXmlID(),existingMovies.getString("id"));
+//                    if(id.equals("tt0506387")){
+//                        System.out.println(m);
+//                    }
+                    String existingMovieId = existingMovies.getString("id");
+//                    System.out.println(existingMovieId);
+                    existingXMLtoMovieID.put(m.getXmlID(),existingMovieId);
                     findExistingStatement.close();
                     existingMovies.close();
                     continue;
@@ -372,6 +378,8 @@ public class MovieParser {
                     insertStatement.addBatch();
                     addedMovies += 1;
                 }
+
+
 
                 for(int i = 0; i < genres.length; i++){
                     String genre = genres[i];

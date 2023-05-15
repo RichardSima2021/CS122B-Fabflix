@@ -140,21 +140,23 @@ public class ActorParser {
                 String actorId = a.getId();
                 String actorName = a.getName();
                 int actorBirthYear = a.getYear();
-                String findExistingActorName = "SELECT * FROM stars WHERE UPPER(name) LIKE UPPER(?)";
-                PreparedStatement findExistingNameStatement = connection.prepareStatement(findExistingActorName);
-                findExistingNameStatement.setString(1, a.getName());
-                ResultSet sameName = findExistingNameStatement.executeQuery();
+//                String findExistingActorName = "SELECT id FROM stars WHERE UPPER(name) LIKE UPPER(?)";
+//                PreparedStatement findExistingNameStatement = connection.prepareStatement(findExistingActorName);
+//                findExistingNameStatement.setString(1, a.getName());
+//                ResultSet sameName = findExistingNameStatement.executeQuery();
+//
+//                if(sameName.next()){
+//                    existingActorsByName.put(a.getName(), sameName.getString("id"));
+//                    duplicateActors += 1;
+//                    continue;
+//                }
+//
+//                findExistingNameStatement.close();
+//                sameName.close();
 
-                if(sameName.next()){
-                    existingActorsByName.put(a.getName(), sameName.getString("id"));
-                    duplicateActors += 1;
-                    continue;
-                }
-
-                findExistingNameStatement.close();
-                sameName.close();
                 insertStatement.setString(1, actorId);
                 insertStatement.setString(2, actorName);
+
                 if(actorBirthYear < 0){
                     insertStatement.setNull(3, Types.NULL);
                 }

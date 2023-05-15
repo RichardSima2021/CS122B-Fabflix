@@ -126,8 +126,10 @@ public class CastParser {
                 }
             }
         }
+
         // try to find actor in parsed hashmap
         Actor actor = actors.get(actorName);
+
         String actorId = null;
         if(actor == null){
             String existingActorId = existingActors.get(actorName);
@@ -146,6 +148,8 @@ public class CastParser {
         else{
             actorId = actor.getId();
         }
+
+
 //        String actorId = actors.get(actorName).getId();
 
         Movie movie = movies.get(filmXMLID);
@@ -167,11 +171,23 @@ public class CastParser {
             movieXmlId = movie.getXmlID();
         }
 
+//        if(filmXMLID.equals("GgL3")){
+//            System.out.println("Found GgL3");
+//            System.out.println("Actor " + actorName);
+//            System.out.println(actor);
+//            System.out.println(actorId);
+//            System.out.println(movie);
+//        }
+
         if(movieXmlId != null && actorId != null){
             if(!moviesAndActorIDs.containsKey(filmXMLID)){
                 moviesAndActorIDs.put(filmXMLID, new ArrayList<String>());
             }
             moviesAndActorIDs.get(filmXMLID).add(actorId);
+
+//            if(filmXMLID.equals("GgL3")){
+//                System.out.println(actorId + " in " + movie.getId());
+//            }
         }
 //        System.out.println(actorName + " in " + filmID);
     }
@@ -179,49 +195,69 @@ public class CastParser {
     private void insertIntoDB(){
         String insertStarInMovieQuery = "INSERT INTO stars_in_movies VALUES(?,?)";
 
-        for(String movieId : moviesAndActorIDs.keySet()){
-            String movieDbId;
-            if(!movies.containsKey(movieId)){
-                // if can't find that xml id in the list of newly parsed movies
-                if(!existingXMLtoMovieID.containsKey(movieId)){
-                    // this movie doesn't exist within the database anywhere, can't link stars to id
-                    continue;
+//        try{
+
+            for(String movieId : moviesAndActorIDs.keySet()){
+                boolean starWars = false;
+                if(movieId.equals("GgL3")){
+                    starWars = true;
+                }
+                String movieDbId;
+                if(!movies.containsKey(movieId)){
+                    // if can't find that xml id in the list of newly parsed movies
+                    if(!existingXMLtoMovieID.containsKey(movieId)){
+                        // this movie doesn't exist within the database anywhere, can't link stars to id
+                        continue;
+                    }
+                    else{
+                        // it already exists in the db
+                        movieDbId = existingXMLtoMovieID.get(movieId);
+                        if(movieId.equals("GyM35")){
+                            System.out.println(movieDbId);
+                        }
+                    }
                 }
                 else{
-                    // it already exists in the db
-                    movieDbId = existingXMLtoMovieID.get(movieId);
+                    // if we can find this xml id in the new movies
+                    movieDbId = movies.get(movieId).getId();
                 }
-            }
-            else{
-                // if we can find this xml id in the new movies
-                movieDbId = movies.get(movieId).getId();
-            }
-            try{
+//                System.out.println(movieDbId);
+                try{
+                    PreparedStatement insertStarInMovieStatement = connection.prepareStatement(insertStarInMovieQuery);
+                    connection.setAutoCommit(false);
 
-                connection.setAutoCommit(false);
-                PreparedStatement insertStarInMovieStatement = connection.prepareStatement(insertStarInMovieQuery);
+                    for(String actorId : moviesAndActorIDs.get(movieId)){
 
-                for(String actorId : moviesAndActorIDs.get(movieId)){
-
-
-                    insertStarInMovieStatement.setString(1, actorId);
-                    insertStarInMovieStatement.setString(2, movieDbId);
-                    insertStarInMovieStatement.addBatch();
+                        insertStarInMovieStatement.setString(1, actorId);
+                        insertStarInMovieStatement.setString(2, movieDbId);
+                        insertStarInMovieStatement.addBatch();
+//                        if(starWars == true){
+//                            System.out.println(insertStarInMovieStatement);
+//                        }
 //                    System.out.println(insertStarInMovieStatement);
-
-
                     actorsAdded += 1;
+                    }
+//                if(starWars == true){
+//                    System.out.println(insertStarInMovieStatement);
+//                }
+                    insertStarInMovieStatement.executeLargeBatch();
+                    connection.commit();
+
+                    moviesAddedInto += 1;
+                    insertStarInMovieStatement.close();
                 }
-                insertStarInMovieStatement.executeBatch();
-                connection.commit();
-            }
-            catch(SQLException e){
+                catch(SQLException e){
+//                    System.out.println(e.getMessage());
+                }
 
             }
 
-            moviesAddedInto += 1;
 
-        }
+//        }
+//        catch(SQLException e){
+//            System.out.println(e.getMessage());
+//        }
+
     }
 
     public void printReport(){
