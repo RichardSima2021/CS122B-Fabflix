@@ -24,7 +24,21 @@ Substring Matching:
 
 XML Parsing Assumptions:
 
-Genre matching was done with the following:\
+If movie has same name, director and year it is counted as a duplicate and is not inserted\
+If a parsed movie has no name, it's not inserted\
+If a parsed movie has no genre, it's not inserted\
+If it has a year value that contains non-integer characters, it's an invalid year and not inserted\
+
+If an actor or movie was not found in the corresponding database, the star_in_movie connection is not inserted.
+
+\
+
+XML Parsing and insertion optimizations:
+
+Writing to memory: While parsing the data from the XML file, write all the raw data into memory for quicker access later instead of needing to re fetch from the database.\
+Execution of queries in batches: Minimize the amount of connections to the server that need to be made and broken by grouping stored procedures into batches and then executing batches of insert/select all at once\
+
+XML Genre Matching was done with the following:\
 codesToGenres.put("Susp", "Thriller");\
 codesToGenres.put("CnR", "Crime");\
 codesToGenres.put("Dram", "Drama");\
@@ -52,16 +66,4 @@ codesToGenres.put("Cart", "Animation");\
 codesToGenres.put("Faml", "Family");\
 codesToGenres.put("Surl", "Surreal");\
 codesToGenres.put("AvGa", "Avant Garde");\
-codesToGenres.put("Hist", "History");\
-
-If movie has same name, director and year it is counted as a duplicate and is not inserted\
-If a parsed movie has no name, it's not inserted\
-If a parsed movie has no genre, it's not inserted\
-If it has a year value that contains non-integer characters, it's an invalid year and not inserted\
-
-If an actor or movie was not found in the corresponding database, the star_in_movie connection is not inserted.
-
-
-XML Parsing and insertion optimizations:
-Writing to memory: While parsing the data from the XML file, write all the raw data into memory for quicker access later instead of needing to re fetch from the database.
-Execution of queries in batches: Minimize the amount of connections to the server that need to be made and broken by grouping stored procedures into batches and then executing batches of insert/select all at once
+codesToGenres.put("Hist", "History");
