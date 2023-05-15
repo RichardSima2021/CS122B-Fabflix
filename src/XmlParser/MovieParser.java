@@ -44,6 +44,7 @@ public class MovieParser {
     String loginUrl;
     Connection connection;
     int addedGenres;
+    int addedMovies;
     public MovieParser(){
         loginUser = "mytestuser";
         loginPasswd = "My6$Password";
@@ -56,6 +57,7 @@ public class MovieParser {
 
         }
         addedGenres = 0;
+        addedMovies = 0;
         existingXMLtoMovieID = new HashMap<>();
         codesToGenres = new HashMap<>();
         codesToGenres.put("Susp", "Thriller");
@@ -92,6 +94,7 @@ public class MovieParser {
     public void run(){
         parseXmlFile();
         parseDocument();
+        insertIntoDb();
 //        printData();
         printReport();
     }
@@ -137,19 +140,21 @@ public class MovieParser {
             try{
                 Movie movie = parseMovie(movieElement, directorName);
 
-                boolean inserted = insertIntoDatabase(movie);
-                if(!inserted){
-                    if(errorCounts.containsKey("Existing Movie"))
-                    {
-                        errorCounts.put("Existing Movie", errorCounts.get("Existing Movie") + 1);
-                    }
-                    else{
-                        errorCounts.put("Existing Movie", 1);
-                    }
-                }
-                else{
-                    moviesById.put(movie.getXmlID(), movie);
-                }
+//                boolean inserted = insertIntoDatabase(movie);
+//                if(!inserted){
+//                    if(errorCounts.containsKey("Existing Movie"))
+//                    {
+//                        errorCounts.put("Existing Movie", errorCounts.get("Existing Movie") + 1);
+//                    }
+//                    else{
+//                        errorCounts.put("Existing Movie", 1);
+//                    }
+//                }
+//                else{
+//                  moviesById.put(movie.getXmlID(), movie);
+//                }
+
+                moviesById.put(movie.getXmlID(), movie);
             }
             catch(MovieDataException e){
 //                String errorStr = "Failed to parse Movie: " + e.getMovieTitle() + " | Error: " + e.getMessage() + " Field: " + e.getErroneousField() + " Value: " + e.getErroneousValue();
@@ -170,6 +175,7 @@ public class MovieParser {
                 }
 //                errorMovies.add("Unnamed Movie");
             }
+
         }
     }
 
@@ -315,7 +321,8 @@ public class MovieParser {
     }
 
     private void printReport(){
-        System.out.println("Inserted " + moviesById.size() + " movies");
+        System.out.println("Inserted " + addedMovies + " movies");
+
         for(String error : errorCounts.keySet()){
             System.out.println(errorCounts.get(error) + " movies had " + error);
         }
@@ -326,87 +333,97 @@ public class MovieParser {
         return existingXMLtoMovieID;
     }
 
-    private boolean insertIntoDatabase(Movie movie){
-        String movieTitle = movie.getTitle();
-        String id = movie.getId();
-        int year = movie.getYear();
-        String director = movie.getDirector();
-        String[] genres = movie.getGenres();
-        int[] genreIDs = new int[genres.length];
+    private void insertIntoDb(){
+        String query = "INSERT INTO movies(id, title, year, director) VALUES(?,?,?,?)";
+        ArrayList<Movie> movies = new ArrayList<>();
+        for(String movieID : moviesById.keySet()){
+            movies.add(moviesById.get(movieID));
+        }
 
         try{
-            String findExistingMovie = "SELECT * FROM movies WHERE UPPER(title) LIKE UPPER(?) AND year = ?";
-            PreparedStatement findExistingStatement = connection.prepareStatement(findExistingMovie);
-
-            findExistingStatement.setString(1,movieTitle);
-            findExistingStatement.setInt(2, year);
-            ResultSet existingMovies = findExistingStatement.executeQuery();
-            if(existingMovies.next()){
-                existingXMLtoMovieID.put(movie.getXmlID(),existingMovies.getString("id"));
-                findExistingStatement.close();
-                existingMovies.close();
-                return false;
-            }
-            findExistingStatement.close();
-            existingMovies.close();
-
-            String query = "INSERT INTO movies(id, title, year, director) VALUES(?,?,?,?)";
+            connection.setAutoCommit(false);
             PreparedStatement insertStatement = connection.prepareStatement(query);
-            insertStatement.setString(1, id);
-            insertStatement.setString(2,movieTitle);
-            insertStatement.setInt(3, year);
-            insertStatement.setString(4, director);
-            insertStatement.executeUpdate();
-            insertStatement.close();
 
-            for(int i = 0; i < genres.length; i++){
-                String genre = genres[i];
-//                System.out.println(genre);
-                String findGenreQuery = "SELECT * FROM genres WHERE name = ?";
-                PreparedStatement findGenreStatement = connection.prepareStatement(findGenreQuery);
+            for(Movie m : movies){
+                String movieTitle = m.getTitle();
+                String id = m.getId();
+                int year = m.getYear();
+                String director = m.getDirector();
+                String[] genres = m.getGenres();
+                int[] genreIDs = new int[genres.length];
+                String findExistingMovie = "SELECT * FROM movies WHERE UPPER(title) LIKE UPPER(?) AND year = ?";
+                PreparedStatement findExistingStatement = connection.prepareStatement(findExistingMovie);
 
-                findGenreStatement.setString(1, genre);
-                ResultSet existingGenres = findGenreStatement.executeQuery();
-                if(existingGenres.next()){
-                    genreIDs[i] = existingGenres.getInt("id");
-                    existingGenres.close();
-                    findGenreStatement.close();
+                findExistingStatement.setString(1,movieTitle);
+                findExistingStatement.setInt(2, year);
+                ResultSet existingMovies = findExistingStatement.executeQuery();
+                if(existingMovies.next()){
+                    existingXMLtoMovieID.put(m.getXmlID(),existingMovies.getString("id"));
+                    findExistingStatement.close();
+                    existingMovies.close();
+                    continue;
                 }
                 else{
-                    existingGenres.close();
-                    String addGenreQuery = "INSERT INTO genres(name) VALUES(?)";
-                    PreparedStatement addGenreStatement = connection.prepareStatement(addGenreQuery);
-                    addGenreStatement.setString(1,genre);
-                    addGenreStatement.executeUpdate();
-                    addGenreStatement.close();
-
-                    ResultSet getNewGenreId = findGenreStatement.executeQuery();
-                    getNewGenreId.next();
-                    genreIDs[i] = getNewGenreId.getInt("id");
-
-
-                    getNewGenreId.close();
-                    findGenreStatement.close();
+                    insertStatement.setString(1, id);
+                    insertStatement.setString(2, movieTitle);
+                    insertStatement.setInt(3, year);
+                    insertStatement.setString(4, director);
+                    insertStatement.addBatch();
+                    addedMovies += 1;
                 }
-            }
 
-            for(int i = 0; i < genreIDs.length; i++){
+                for(int i = 0; i < genres.length; i++){
+                    String genre = genres[i];
+//                System.out.println(genre);
+                    String findGenreQuery = "SELECT * FROM genres WHERE name = ?";
+                    PreparedStatement findGenreStatement = connection.prepareStatement(findGenreQuery);
+
+                    findGenreStatement.setString(1, genre);
+                    ResultSet existingGenres = findGenreStatement.executeQuery();
+                    if(existingGenres.next()){
+                        genreIDs[i] = existingGenres.getInt("id");
+                        existingGenres.close();
+                        findGenreStatement.close();
+                    }
+                    else{
+                        existingGenres.close();
+                        String addGenreQuery = "INSERT INTO genres(name) VALUES(?)";
+                        PreparedStatement addGenreStatement = connection.prepareStatement(addGenreQuery);
+                        addGenreStatement.setString(1,genre);
+                        addGenreStatement.executeUpdate();
+                        connection.commit();
+                        addGenreStatement.close();
+
+                        ResultSet getNewGenreId = findGenreStatement.executeQuery();
+                        getNewGenreId.next();
+                        genreIDs[i] = getNewGenreId.getInt("id");
+
+
+                        getNewGenreId.close();
+                        findGenreStatement.close();
+                    }
+                }
+
                 String linkGenreAndMovieQuery = "INSERT INTO genres_in_movies(genreId, movieId) VALUES(?,?)";
                 PreparedStatement linkGenreAndMovieStatement = connection.prepareStatement(linkGenreAndMovieQuery);
+                for(int i = 0; i < genreIDs.length; i++){
+                    linkGenreAndMovieStatement.setInt(1, genreIDs[i]);
+                    linkGenreAndMovieStatement.setString(2, id);
+//                    System.out.println(linkGenreAndMovieStatement);
+                    linkGenreAndMovieStatement.addBatch();
+                }
+                insertStatement.executeLargeBatch();
+                linkGenreAndMovieStatement.executeBatch();
 
-                linkGenreAndMovieStatement.setInt(1, genreIDs[i]);
-                linkGenreAndMovieStatement.setString(2, id);
-
-                linkGenreAndMovieStatement.executeUpdate();
             }
         }
-        catch(Exception e){
-//            System.out.println(movie.getGenresInStr());
-//            System.out.println(movie);
-            return false;
+        catch(SQLException e){
+            System.out.println(e.getMessage());
         }
-        return true;
+
+
     }
+
     public static void main(String[] args){
         MovieParser movieParser = new MovieParser();
 
