@@ -20,8 +20,7 @@ function submitLoginForm(formSubmitEvent){
 
         "../api/dashboard_login",
         {
-            contentType:"appliation/json",
-            dataType:"json",
+            // dataType:"json",
             method:"POST",
             data:login_form.serialize(),
             success: (resultData) => handleLoginResult(resultData)
