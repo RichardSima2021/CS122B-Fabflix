@@ -73,4 +73,5 @@ codesToGenres.put("Hist", "History");
 
 Any others genres were added with its code as the name
 
-XML Report:
+XML Report:\
+

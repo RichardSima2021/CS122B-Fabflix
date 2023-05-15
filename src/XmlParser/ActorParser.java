@@ -198,7 +198,7 @@ public class ActorParser {
 
     public void printReport(){
         System.out.println("Inserted " + addedActors + " actors");
-        System.out.println(duplicateActors + " existing actors");
+//        System.out.println(duplicateActors + " existing actors");
     }
     public HashMap<String,Actor> getActors(){
         return actorsByName;
