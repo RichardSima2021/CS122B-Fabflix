@@ -37,8 +37,9 @@ If an actor or movie was not found in the corresponding database, the star_in_mo
 
 XML Parsing and insertion optimizations:
 
-Writing to memory: While parsing the data from the XML file, write all the raw data into memory for quicker access later instead of needing to re fetch from the database.\
-Execution of queries in batches: Minimize the amount of connections to the server that need to be made and broken by grouping stored procedures into batches and then executing batches of insert/select all at once\
+Writing to memory: While parsing the data from the XML file, write all the raw data into memory for quicker access later instead of needing to re fetch from the database. Cut time down from 15 min to 5 mins.\
+Execution of queries in batches: Minimize the amount of connections to the server that need to be made and broken by grouping stored procedures into batches and then executing batches of insert/select all at once. Cut time down from 5 mins to 1:35.\
+All times noted are running time on local machine. AWS time is approx. double.
 
 XML Genre Matching was done with the following:\
 codesToGenres.put("Susp", "Thriller");\
