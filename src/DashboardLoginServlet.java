@@ -66,7 +66,7 @@ public class DashboardLoginServlet extends HttpServlet{
                 // no such user
                 responseJsonObject.addProperty("status", "fail");
                 request.getServletContext().log("Login failed");
-                responseJsonObject.addProperty("message", "email " + email + " doesn't exist");
+                responseJsonObject.addProperty("message", "Employee email " + email + " doesn't exist");
             }
             else{
                 String encryptedPassword = rs.getString("password");
