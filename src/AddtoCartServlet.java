@@ -23,21 +23,17 @@ public class AddtoCartServlet extends HttpServlet{
         PrintWriter out = response.getWriter();
 
         try{
-//            System.out.println(request.getRequestURI());
-//            System.out.println(request.getQueryString());
             String title = request.getParameter("title");
             double price = Double.parseDouble(request.getParameter("price"));
 
             HttpSession session = request.getSession();
             ShoppingCart cart = (ShoppingCart) session.getAttribute("cart");
 
-//            System.out.println("Movie: " + title + " price: " + price);
             if (cart == null){
                 cart = new ShoppingCart();
                 session.setAttribute("cart", cart);
             }
             cart.addItem(title, 1, price);
-//            System.out.println(cart);
             response.setStatus(200);
         }
         catch(Exception e){
