@@ -27,6 +27,9 @@ public class Movie {
         this.xmlID = xmlID;
     }
 
+    public void setDBId(String id){
+        this.id = id;
+    }
     public String getTitle() {
         return title;
     }

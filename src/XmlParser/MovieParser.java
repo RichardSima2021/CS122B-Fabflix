@@ -364,6 +364,9 @@ public class MovieParser {
 //                        System.out.println(m);
 //                    }
                     String existingMovieId = existingMovies.getString("id");
+                    Movie updatedMovie = moviesById.get(m.getXmlID());
+                    updatedMovie.setDBId(existingMovieId);
+                    moviesById.put(m.getXmlID(), updatedMovie);
 //                    System.out.println(existingMovieId);
                     existingXMLtoMovieID.put(m.getXmlID(),existingMovieId);
                     findExistingStatement.close();

@@ -199,11 +199,16 @@ public class CastParser {
 
             for(String movieId : moviesAndActorIDs.keySet()){
                 boolean starWars = false;
-                if(movieId.equals("GgL3")){
-                    starWars = true;
-                }
+//                if(movieId.equals("GgL3")){
+//                    starWars = true;
+//                }
+
                 String movieDbId;
-                if(!movies.containsKey(movieId)){
+                if(movies.containsKey(movieId)){
+                    // if we can find this xml id in the new movies
+                    movieDbId = movies.get(movieId).getId();
+                }
+                else{
                     // if can't find that xml id in the list of newly parsed movies
                     if(!existingXMLtoMovieID.containsKey(movieId)){
                         // this movie doesn't exist within the database anywhere, can't link stars to id
@@ -212,15 +217,16 @@ public class CastParser {
                     else{
                         // it already exists in the db
                         movieDbId = existingXMLtoMovieID.get(movieId);
-                        if(movieId.equals("GyM35")){
-                            System.out.println(movieDbId);
-                        }
+
                     }
+//                    if(movieId.equals("GyM35")){
+//                        System.out.println("debug " + movieDbId);
+//                    }
                 }
-                else{
-                    // if we can find this xml id in the new movies
-                    movieDbId = movies.get(movieId).getId();
-                }
+
+//                if(movieId.equals("GyM35")){
+//                    System.out.println("GyM35 " + movieDbId);
+//                }
 //                System.out.println(movieDbId);
                 try{
                     PreparedStatement insertStarInMovieStatement = connection.prepareStatement(insertStarInMovieQuery);
