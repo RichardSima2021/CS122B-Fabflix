@@ -415,6 +415,8 @@ public class MovieParser {
             }
             insertStatement.executeLargeBatch();
             linkGenreAndMovieStatement.executeLargeBatch();
+            insertStatement.close();
+            linkGenreAndMovieStatement.close();
             connection.commit();
         }
         catch(SQLException e){

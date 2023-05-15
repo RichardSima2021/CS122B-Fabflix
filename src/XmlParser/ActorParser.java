@@ -23,6 +23,7 @@ public class ActorParser {
     String loginUrl;
     Connection connection;
 
+    int addedActors;
     public void run(){
         parseXmlFile();
         parseDocument();
@@ -41,6 +42,8 @@ public class ActorParser {
         catch(Exception e){
 
         }
+        existingActorsByName = new HashMap<>();
+        addedActors = 0;
     }
 
     private void parseXmlFile(){
@@ -123,7 +126,52 @@ public class ActorParser {
     }
 
     private void insertIntoDb(){
+        String query = "INSERT INTO stars VALUES(?,?,?)";
+        ArrayList<Actor> actors = new ArrayList<>();
+        for(String name : actorsByName.keySet()){
+            actors.add(actorsByName.get(name));
+        }
 
+        try{
+            connection.setAutoCommit(false);
+            PreparedStatement insertStatement = connection.prepareStatement(query);
+
+            for(Actor a : actors){
+                String actorId = a.getId();
+                String actorName = a.getName();
+                int actorBirthYear = a.getYear();
+                String findExistingActorName = "SELECT * FROM stars WHERE UPPER(name) LIKE UPPER(?)";
+                PreparedStatement findExistingNameStatement = connection.prepareStatement(findExistingActorName);
+                findExistingNameStatement.setString(1, a.getName());
+                ResultSet sameName = findExistingNameStatement.executeQuery();
+
+                if(sameName.next()){
+                    existingActorsByName.put(a.getName(), sameName.getString("id"));
+                    duplicateActors += 1;
+                    continue;
+                }
+
+                findExistingNameStatement.close();
+                sameName.close();
+                insertStatement.setString(1, actorId);
+                insertStatement.setString(2, actorName);
+                if(actorBirthYear < 0){
+                    insertStatement.setNull(3, Types.NULL);
+                }
+                else{
+                    insertStatement.setInt(3, actorBirthYear);
+                }
+                insertStatement.addBatch();
+                addedActors += 1;
+
+            }
+            insertStatement.executeLargeBatch();
+            insertStatement.close();
+            connection.commit();
+        }
+        catch(SQLException e){
+
+        }
     }
 
     private boolean insertIntoDatabase(Actor actor) throws SQLException{
@@ -174,12 +222,13 @@ public class ActorParser {
     }
 
     public void printReport(){
-        System.out.println("Inserted " + actorsByName.size() + " actors");
+        System.out.println("Inserted " + addedActors + " actors");
         System.out.println(duplicateActors + " existing actors");
     }
     public HashMap<String,Actor> getActors(){
         return actorsByName;
     }
+
 
     public static void main(String[] args){
         ActorParser actorParser = new ActorParser();

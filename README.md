@@ -59,6 +59,6 @@ If a parsed movie has no name, it's not inserted\
 If a parsed movie has no genre, it's not inserted\
 If it has a year value that contains non-integer characters, it's an invalid year and not inserted\
 
-If an actor with the same name and birth year already exists, it's not inserted\
+Stars with the same name are treated as duplicates and not inserted again\
 
 If an actor or movie was not found in the corresponding database, the star_in_movie connection is not inserted.
