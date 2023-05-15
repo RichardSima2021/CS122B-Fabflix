@@ -46,6 +46,47 @@ public class LoginServlet extends HttpServlet {
         // Verify reCAPTCHA
         try {
             RecaptchaVerifyUtils.verify(gRecaptchaResponse);
+
+            try (Connection conn = dataSource.getConnection()) {
+                String query = "SELECT password, id FROM customers WHERE email = ?";
+                PreparedStatement getUserStatement = conn.prepareStatement(query);
+                getUserStatement.setString(1,email);
+                ResultSet rs = getUserStatement.executeQuery();
+                if(rs.next() == false){
+                    // no such user
+                    responseJsonObject.addProperty("status", "fail");
+                    request.getServletContext().log("Login failed");
+                    responseJsonObject.addProperty("message", "email " + email + " doesn't exist");
+                }
+                else{
+                    String encryptedPassword = rs.getString("password");
+                    boolean success = new StrongPasswordEncryptor().checkPassword(password, encryptedPassword);
+                    if(success){
+                        id = rs.getInt("id");
+                        request.getSession().setAttribute("user", new User(email, id));
+                        request.getSession().setAttribute("accountType","user");
+                        responseJsonObject.addProperty("status", "success");
+                        responseJsonObject.addProperty("message", "success");
+                    }
+                    else{
+                        // wrong password
+                        responseJsonObject.addProperty("status", "fail");
+                        request.getServletContext().log("Login failed");
+                        responseJsonObject.addProperty("message", "incorrect password");
+                    }
+                }
+                response.getWriter().write(responseJsonObject.toString());
+            }catch (Exception e) {
+
+                // Write error message JSON object to output
+                JsonObject jsonObject = new JsonObject();
+                jsonObject.addProperty("errorMessage", e.getMessage());
+                System.out.println(jsonObject);
+                response.getWriter().write(jsonObject.toString());
+
+                // Set response status to 500 (Internal Server Error)
+                response.setStatus(500);
+            }
         } catch (Exception e) {
             responseJsonObject.addProperty("status", "fail");
             request.getServletContext().log("Login failed");
@@ -53,51 +94,12 @@ public class LoginServlet extends HttpServlet {
             response.getWriter().write(responseJsonObject.toString());
             response.setStatus(200);
             response.getWriter().close();
-            return;
+//            return;
         }
 
 
 
-        try (Connection conn = dataSource.getConnection()) {
-            String query = "SELECT password, id FROM customers WHERE email = ?";
-            PreparedStatement getUserStatement = conn.prepareStatement(query);
-            getUserStatement.setString(1,email);
-            ResultSet rs = getUserStatement.executeQuery();
-            if(rs.next() == false){
-                // no such user
-                responseJsonObject.addProperty("status", "fail");
-                request.getServletContext().log("Login failed");
-                responseJsonObject.addProperty("message", "email " + email + " doesn't exist");
-            }
-            else{
-                String encryptedPassword = rs.getString("password");
-                boolean success = new StrongPasswordEncryptor().checkPassword(password, encryptedPassword);
-                if(success){
-                    id = rs.getInt("id");
-                    request.getSession().setAttribute("user", new User(email, id));
-                    request.getSession().setAttribute("accountType","user");
-                    responseJsonObject.addProperty("status", "success");
-                    responseJsonObject.addProperty("message", "success");
-                }
-                else{
-                    // wrong password
-                    responseJsonObject.addProperty("status", "fail");
-                    request.getServletContext().log("Login failed");
-                    responseJsonObject.addProperty("message", "incorrect password");
-                }
-            }
-            response.getWriter().write(responseJsonObject.toString());
-        }catch (Exception e) {
 
-            // Write error message JSON object to output
-            JsonObject jsonObject = new JsonObject();
-            jsonObject.addProperty("errorMessage", e.getMessage());
-            System.out.println(jsonObject);
-            response.getWriter().write(jsonObject.toString());
-
-            // Set response status to 500 (Internal Server Error)
-            response.setStatus(500);
-        }
         finally {
             response.getWriter().close();
         }
