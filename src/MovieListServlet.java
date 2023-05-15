@@ -272,18 +272,18 @@ public class MovieListServlet extends HttpServlet {
             PreparedStatement prepStatement = conn.prepareStatement(query);
             for(int i = 0; i < parameters.size(); i++){
                 if(parameters.get(i).equals("star")){
-                    searchByStar = "%" + searchByStar + "%";
+                    searchByStar =  searchByStar + "%";
                     prepStatement.setString(i+1, searchByStar);
                 }
                 else if(parameters.get(i).equals("title")){
-                    searchByTitle = "%" + searchByTitle + "%";
+                    searchByTitle =  searchByTitle + "%";
                     prepStatement.setString(i+1, searchByTitle);
                 }
                 else if(parameters.get(i).equals("year")){
                     prepStatement.setInt(i+1, Integer.parseInt(searchByYear));
                 }
                 else if(parameters.get(i).equals("director")){
-                    searchByDirector = "%" + searchByDirector + "%";
+                    searchByDirector = searchByDirector + "%";
                     prepStatement.setString(i+1, searchByDirector);
                 }
             }
