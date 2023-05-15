@@ -14,12 +14,14 @@ Substring Matching:
 
 - Browsing by * was matched by WHERE m.title REGEXP '^[^a-zA-Z0-9]')
 
-- Search by title was matched by "WHERE TITLE LIKE %title%"
+- Search by title was matched by "WHERE TITLE LIKE title%"
 
-- Search by star was matched by "WHERE s.name LIKE %name%"
+- Search by star was matched by "WHERE s.name LIKE name%"
 
-- Search by director was matched by WHERE "m.director LIKE %name%"
+- Search by director was matched by WHERE "m.director LIKE name%"
 
+
+Stored Procedure implemented for queries where it contains text that the user inputs. Such as Login, Search, and Checkout
 
 
 XML Parsing Assumptions:
@@ -68,5 +70,6 @@ codesToGenres.put("Surl", "Surreal");\
 codesToGenres.put("AvGa", "Avant Garde");\
 codesToGenres.put("Hist", "History");
 
+Any others genres were added with its code as the name
 
 XML Report:
