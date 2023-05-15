@@ -37,18 +37,24 @@ public class DashboardLoginServlet extends HttpServlet{
         String providedPassword = request.getParameter("password");
         String gRecaptchaResponse = request.getParameter("g-recaptcha-response");
 
+        PrintWriter out = response.getWriter();
+        JsonObject responseJsonObject = new JsonObject();
+
         // Verify reCAPTCHA
         try {
             RecaptchaVerifyUtils.verify(gRecaptchaResponse);
         } catch (Exception e) {
-
+            responseJsonObject.addProperty("status", "fail");
+            request.getServletContext().log("Login failed");
+            responseJsonObject.addProperty("message", "reCaptcha not verified");
+            out.write(responseJsonObject.toString());
+            response.setStatus(200);
+            out.close();
             return;
         }
 
         System.out.println("Attempted login with: " + email + ", " + providedPassword);
-        JsonObject responseJsonObject = new JsonObject();
 
-        PrintWriter out = response.getWriter();
 
         try(Connection conn = dataSource.getConnection()){
             String query = "SELECT password, email, fullname FROM employees WHERE email = ?";

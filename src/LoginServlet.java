@@ -41,15 +41,22 @@ public class LoginServlet extends HttpServlet {
         String gRecaptchaResponse = request.getParameter("g-recaptcha-response");
         System.out.println("gRecaptchaResponse=" + gRecaptchaResponse);
 
+        JsonObject responseJsonObject = new JsonObject();
+
         // Verify reCAPTCHA
         try {
             RecaptchaVerifyUtils.verify(gRecaptchaResponse);
         } catch (Exception e) {
-
+            responseJsonObject.addProperty("status", "fail");
+            request.getServletContext().log("Login failed");
+            responseJsonObject.addProperty("message", "reCaptcha not verified");
+            response.getWriter().write(responseJsonObject.toString());
+            response.setStatus(200);
+            response.getWriter().close();
             return;
         }
 
-        JsonObject responseJsonObject = new JsonObject();
+
 
         try (Connection conn = dataSource.getConnection()) {
             String query = "SELECT password, id FROM customers WHERE email = ?";
