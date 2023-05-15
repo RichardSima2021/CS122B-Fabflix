@@ -90,6 +90,7 @@ public class AddMovieServlet extends HttpServlet{
                 }
                 else{
                     resultJson.addProperty("newStarEntry",false);
+                    resultJson.addProperty("starID", starID);
                 }
 
                 if(addMovieStatement.getBoolean(12)){
@@ -98,6 +99,7 @@ public class AddMovieServlet extends HttpServlet{
                 }
                 else{
                     resultJson.addProperty("newGenreEntry",false);
+                    resultJson.addProperty("genreID", genreID);
                 }
 
             }

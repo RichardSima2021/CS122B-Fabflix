@@ -7,8 +7,14 @@ function handleAddMovieResult(resultData){
         if(resultData["newStarEntry"]){
             resultMessage += " New Star added, starID: " + resultData["starID"] + ".";
         }
+        else{
+            resultMessage += " Star already exists, starID: " + resultData["starID"] + "."
+        }
         if(resultData["newGenreEntry"]){
             resultMessage += " New Genre added, genreID: " + resultData["genreID"] + ".";
+        }
+        else{
+            resultMessage += " Genre already exists, genreID: " + resultData["genreID"] + "."
         }
         $("#add_movie_result_message").text(resultMessage);
     }
