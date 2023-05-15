@@ -2,6 +2,7 @@ package XmlParser;
 
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
+import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 import org.xml.sax.SAXException;
 
@@ -42,7 +43,7 @@ public class MovieParser {
     String loginPasswd;
     String loginUrl;
     Connection connection;
-
+    int addedGenres;
     public MovieParser(){
         loginUser = "mytestuser";
         loginPasswd = "My6$Password";
@@ -54,7 +55,7 @@ public class MovieParser {
         catch(Exception e){
 
         }
-
+        addedGenres = 0;
         existingXMLtoMovieID = new HashMap<>();
         codesToGenres = new HashMap<>();
         codesToGenres.put("Susp", "Thriller");
@@ -193,9 +194,9 @@ public class MovieParser {
 //            if(title.equals("Star Wars")){
 //                System.out.println(title + " " + e.getMessage() + " " + e.getErroneousField() + " " + e.getErroneousValue());
 //            }
-            if(e.getErroneousValue().equals("2")){
-                System.out.println(title + " " + e.getMessage() + " " + e.getErroneousField() + " " + e.getErroneousValue());
-            }
+//            if(e.getErroneousValue().equals("2")){
+//                System.out.println(title + " " + e.getMessage() + " " + e.getErroneousField() + " " + e.getErroneousValue());
+//            }
             throw new MovieDataException(title, e.getMessage(), e.getErroneousField(), e.getErroneousValue());
         }
 
@@ -252,39 +253,52 @@ public class MovieParser {
     }
 
     private String[] getGenres(Element filmElement) throws MovieDataException {
-        NodeList genresList = filmElement.getElementsByTagName("cat");
+//        System.out.println(filmElement.getAttributes());
+//        NodeList genresList = filmElement.getElementsByTagName("cat");
         ArrayList<String> genresArrList = new ArrayList<>();
-
-
-//        String genres[] = new String[genresList.getLength()];
-        if(genresList.getLength() <= 0 || genresList.item(0).getFirstChild() == null){
-            throw new MovieDataException("","No Genres", "cats", "1");
-//            String[] nullGenres = new String[1];
-//            nullGenres[0] = null;
-//            return nullGenres;
-        }
-        for(int i = 0; i < genresList.getLength(); i++){
-            Element genreElement = (Element) genresList.item(i);
-//            String genre = getTextValue(genreElement,"cat");
-            String genre = codesToGenres.get(genreElement.getFirstChild().getNodeValue());
-            if(genre != null){
-                genresArrList.add(genre);
+        NodeList catNodes = filmElement.getElementsByTagName("cats");
+        if(catNodes.getLength() > 0){
+            for(int i = 0; i < catNodes.getLength(); i++){
+                Node catNode = catNodes.item(i);
+                if(catNode.getNodeType() == Node.ELEMENT_NODE){
+                    Element genreElement = (Element) catNode;
+                    String genre = getTextValue(genreElement, "cat");
+                    if(genre != null){
+                        genre = genre.strip();
+                        if(codesToGenres.containsKey(genre)){
+                            genre = codesToGenres.get(genre);
+                        }
+                        else{
+                            codesToGenres.put(genre, genre);
+                            addedGenres += 1;
+                        }
+                        genresArrList.add(genre);
+                    }
+                }
             }
         }
         if(genresArrList.size() == 0){
-            throw new MovieDataException("","No Genres", "cats", "2");
+            throw new MovieDataException("", "No Genres", "cats", "1");
         }
-        String[] genres = new String[genresArrList.size()];
-        for(int i = 0; i < genresArrList.size(); i++){
-            genres[i] = genresArrList.get(i);
+        else{
+            String[] genres = new String[genresArrList.size()];
+            for(int i = 0; i < genresArrList.size();i++){
+                genres[i] = genresArrList.get(i);
+            }
+            return genres;
         }
-        return genres;
     }
 
     private String getTextValue(Element element, String tagName){
 
         String textVal = null;
         NodeList nodeList = element.getElementsByTagName(tagName);
+        if(nodeList.item(0) == null){
+            return null;
+        }
+        if(nodeList.item(0).getFirstChild() == null){
+            return null;
+        }
 //        System.out.println(tagName + " " + nodeList.getLength());
         if(nodeList.getLength() > 0){
             textVal = nodeList.item(0).getFirstChild().getNodeValue();
@@ -305,6 +319,7 @@ public class MovieParser {
         for(String error : errorCounts.keySet()){
             System.out.println(errorCounts.get(error) + " movies had " + error);
         }
+        System.out.println("Added " + addedGenres + " genres");
     }
 
     public HashMap<String,String> getExistingXMLtoMovieID(){

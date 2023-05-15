@@ -62,7 +62,7 @@ public class CastParser {
         parseDocument();
 //        System.out.println(actorsAdded + " actors added");
         insertIntoDB();
-//        printReport();
+        printReport();
     }
 
     private void parseXmlFile(){
@@ -177,6 +177,8 @@ public class CastParser {
     }
 
     private void insertIntoDB(){
+        String insertStarInMovieQuery = "INSERT INTO stars_in_movies VALUES(?,?)";
+
         for(String movieId : moviesAndActorIDs.keySet()){
             String movieDbId;
             if(!movies.containsKey(movieId)){
@@ -194,25 +196,29 @@ public class CastParser {
                 // if we can find this xml id in the new movies
                 movieDbId = movies.get(movieId).getId();
             }
-            for(String actorId : moviesAndActorIDs.get(movieId)){
-                try{
-                    String insertStarInMovieQuery = "INSERT INTO stars_in_movies VALUES(?,?)";
-                    PreparedStatement insertStarInMovieStatement = connection.prepareStatement(insertStarInMovieQuery);
+            try{
+
+                connection.setAutoCommit(false);
+                PreparedStatement insertStarInMovieStatement = connection.prepareStatement(insertStarInMovieQuery);
+
+                for(String actorId : moviesAndActorIDs.get(movieId)){
+
 
                     insertStarInMovieStatement.setString(1, actorId);
                     insertStarInMovieStatement.setString(2, movieDbId);
-
+                    insertStarInMovieStatement.addBatch();
 //                    System.out.println(insertStarInMovieStatement);
 
-                    insertStarInMovieStatement.executeUpdate();
-                    insertStarInMovieStatement.close();
+
                     actorsAdded += 1;
                 }
-                catch(SQLException e){
-                    System.out.println(e.getMessage());
-                }
+                insertStarInMovieStatement.executeBatch();
+                connection.commit();
+            }
+            catch(SQLException e){
 
             }
+
             moviesAddedInto += 1;
 
         }
