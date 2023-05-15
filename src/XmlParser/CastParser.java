@@ -177,11 +177,10 @@ public class CastParser {
             }
             moviesAndActorIDs.get(filmXMLID).add(actorId);
 
-//            if(filmXMLID.equals("GgL3")){
-//                System.out.println(actorId + " in " + movie.getId());
-//            }
+
+
         }
-//        System.out.println(actorName + " in " + filmID);
+
     }
 
     private void insertIntoDB(){
@@ -209,11 +208,8 @@ public class CastParser {
                     else{
                         // it already exists in the db
                         movieDbId = existingXMLtoMovieID.get(movieId);
-
                     }
-
                 }
-
 
                 try{
                     PreparedStatement insertStarInMovieStatement = connection.prepareStatement(insertStarInMovieQuery);
@@ -239,13 +235,6 @@ public class CastParser {
                 }
 
             }
-
-
-//        }
-//        catch(SQLException e){
-//            System.out.println(e.getMessage());
-//        }
-
     }
 
     public void printReport(){
