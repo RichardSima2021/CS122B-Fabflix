@@ -343,7 +343,8 @@ public class MovieParser {
         try{
             connection.setAutoCommit(false);
             PreparedStatement insertStatement = connection.prepareStatement(query);
-
+            String linkGenreAndMovieQuery = "INSERT INTO genres_in_movies(genreId, movieId) VALUES(?,?)";
+            PreparedStatement linkGenreAndMovieStatement = connection.prepareStatement(linkGenreAndMovieQuery);
             for(Movie m : movies){
                 String movieTitle = m.getTitle();
                 String id = m.getId();
@@ -404,18 +405,17 @@ public class MovieParser {
                     }
                 }
 
-                String linkGenreAndMovieQuery = "INSERT INTO genres_in_movies(genreId, movieId) VALUES(?,?)";
-                PreparedStatement linkGenreAndMovieStatement = connection.prepareStatement(linkGenreAndMovieQuery);
+
                 for(int i = 0; i < genreIDs.length; i++){
                     linkGenreAndMovieStatement.setInt(1, genreIDs[i]);
                     linkGenreAndMovieStatement.setString(2, id);
 //                    System.out.println(linkGenreAndMovieStatement);
                     linkGenreAndMovieStatement.addBatch();
                 }
-                insertStatement.executeLargeBatch();
-                linkGenreAndMovieStatement.executeBatch();
-
             }
+            insertStatement.executeLargeBatch();
+            linkGenreAndMovieStatement.executeLargeBatch();
+            connection.commit();
         }
         catch(SQLException e){
             System.out.println(e.getMessage());

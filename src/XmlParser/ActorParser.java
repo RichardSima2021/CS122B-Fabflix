@@ -26,6 +26,7 @@ public class ActorParser {
     public void run(){
         parseXmlFile();
         parseDocument();
+        insertIntoDb();
         printReport();
     }
 
@@ -63,20 +64,21 @@ public class ActorParser {
             Element actorElement = (Element) actorList.item(i);
 
             Actor actor = parseActor(actorElement);
-            try{
-//                System.out.println("Trying to insert " + actor);
-                boolean inserted = insertIntoDatabase(actor);
-                if(inserted){
-                    actorsByName.put(actor.getName(), actor);
-//                    System.out.println("Inserted " + actor);
-                }
-                else{
-                    duplicateActors += 1;
-                }
-            }
-            catch(Exception e){
-//                System.out.println(e.getMessage());
-            }
+            actorsByName.put(actor.getName(), actor);
+//            try{
+////                System.out.println("Trying to insert " + actor);
+//                boolean inserted = insertIntoDatabase(actor);
+//                if(inserted){
+//
+////                    System.out.println("Inserted " + actor);
+//                }
+//                else{
+//                    duplicateActors += 1;
+//                }
+//            }
+//            catch(Exception e){
+////                System.out.println(e.getMessage());
+//            }
 
         }
     }
@@ -120,22 +122,15 @@ public class ActorParser {
         return existingActorsByName;
     }
 
+    private void insertIntoDb(){
+
+    }
+
     private boolean insertIntoDatabase(Actor actor) throws SQLException{
         String actorName = actor.getName();
         String actorID = actor.getId();
         int birthYear = actor.getYear();
         try{
-//            String findExistingActor = "SELECT * FROM stars WHERE UPPER(name) LIKE UPPER(?) AND (birthYear = NULL OR birthYear = ?)";
-//            PreparedStatement findExistingStatement = connection.prepareStatement(findExistingActor);
-//
-//            findExistingStatement.setString(1, actorName);
-//            findExistingStatement.setInt(2, birthYear);
-//            ResultSet existingActors = findExistingStatement.executeQuery();
-//            if(existingActors.next()){
-//                return false;
-//            }
-//            findExistingStatement.close();
-//            existingActors.close();
             String findExistingActorName = "SELECT * FROM stars WHERE UPPER(name) LIKE UPPER(?)";
             PreparedStatement findExistingNameStatement = connection.prepareStatement(findExistingActorName);
             findExistingNameStatement.setString(1, actorName);
