@@ -1,10 +1,10 @@
-Video URL: https://youtu.be/N1XPKXiBOb4
+Video URL: https://youtu.be/oSPpXsYjSSI
 
 Contributions:
 
-Lisa Chen: Dashboard CSS + HTML, XML Dom parser
+Lisa Chen: Dashboard CSS + HTML, XML Dom parser, DNS setup
 
-Richard Sima: Dashboard Servlet, SQL Stored Procedure, XML Dom parser
+Richard Sima: Dashboard Servlet, SQL Stored Procedure, XML Dom parser, Custom Domain Purchase
 
 
 \
