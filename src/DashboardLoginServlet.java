@@ -88,7 +88,7 @@ public class DashboardLoginServlet extends HttpServlet{
         } catch (Exception e) {
             responseJsonObject.addProperty("status", "fail");
             request.getServletContext().log("Login failed");
-            responseJsonObject.addProperty("message", "reCaptcha not verified " + e.getMessage());
+            responseJsonObject.addProperty("message", "reCaptcha not verified ");
             out.write(responseJsonObject.toString());
             response.setStatus(200);
             out.close();

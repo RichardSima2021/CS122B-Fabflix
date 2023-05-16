@@ -144,14 +144,12 @@ public class MovieParser {
                 moviesById.put(movie.getXmlID(), movie);
             }
             catch(MovieDataException e){
-//                String errorStr = "Failed to parse Movie: " + e.getMovieTitle() + " | Error: " + e.getMessage() + " Field: " + e.getErroneousField() + " Value: " + e.getErroneousValue();
                 if(errorCounts.containsKey(e.getMessage())){
                     errorCounts.put(e.getMessage(), errorCounts.get(e.getMessage())+1);
                 }
                 else{
                     errorCounts.put(e.getMessage(),1);
                 }
-//                errorMovies.add(errorStr);
             }
             catch(UnnamedMovieException e){
                 if(errorCounts.containsKey("Unnamed Movie")){
@@ -160,7 +158,6 @@ public class MovieParser {
                 else{
                     errorCounts.put("Unnamed Movie", 1);
                 }
-//                errorMovies.add("Unnamed Movie");
             }
 
         }
@@ -184,12 +181,6 @@ public class MovieParser {
             return new Movie(title, year, directorName, genres, xmlID);
         }
         catch(MovieDataException e){
-//            if(title.equals("Star Wars")){
-//                System.out.println(title + " " + e.getMessage() + " " + e.getErroneousField() + " " + e.getErroneousValue());
-//            }
-//            if(e.getErroneousValue().equals("2")){
-//                System.out.println(title + " " + e.getMessage() + " " + e.getErroneousField() + " " + e.getErroneousValue());
-//            }
             throw new MovieDataException(title, e.getMessage(), e.getErroneousField(), e.getErroneousValue());
         }
 
