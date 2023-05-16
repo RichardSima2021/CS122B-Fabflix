@@ -74,14 +74,3 @@ codesToGenres.put("Hist", "History");
 Any others genres were added with its code as the name
 
 XML Report:\
-
-Inserted 8711 movies
-3324 movies had No Genres
-17 movies had Invalid Year Value
-8 movies had Unnamed Movie
-Added 88 genres
-Inserted 6839 actors
-28699 actors added in 6434 movies
-Actor not provided for movie: 20772
-Movies not provided for an actor: 6960
-No actors for a role: 3
